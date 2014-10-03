@@ -4,7 +4,7 @@ import time, sys, getopt, subprocess
 
 
 class EtcdResolver:
-	def __init__(self, etcd_address, hostname, etcd_port=ETCD_PORT, etcd_directory=ETCD_KEYS_DIRECTORY, hosts_file=HOSTS_FILE, ttl=6):
+	def __init__(self, etcd_address, hostname, etcd_port=ETCD_PORT, etcd_directory=ETCD_KEYS_DIRECTORY, hosts_file=HOSTS_FILE, ttl=15):
 		"""
 		Initialize the service for naming the containers (hosts) in the cluster.
 		!!! Assumption !!! The code assumes that the machine that hosts the container has same IP as the etcd_address!
