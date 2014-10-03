@@ -35,7 +35,7 @@ class EtcdResolver:
 			raise
 		finally:
 			# write only the default configuration into the file.
-			f = open(hosts_file,'w')
+			f = open(self.hosts_file,'w')
 			f.write(self.default_hosts)
 			f.close()
 
