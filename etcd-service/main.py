@@ -19,7 +19,7 @@ class EtcdResolver:
 		self.hosts_file = hosts_file
 		self.ttl = ttl
 		self.last_update = 0
-		signal.signal(signal.SIGTERM, exception_handler)
+		signal.signal(signal.SIGTERM, self.exception_handler)
 		
 	def run(self):
 		"""
@@ -36,7 +36,7 @@ class EtcdResolver:
 			raise
 		finally:
 			# write only the default configuration into the file.
-			exception_handler()
+			self.exception_handler()
 
 	def update_local_names(self):
 		"""
