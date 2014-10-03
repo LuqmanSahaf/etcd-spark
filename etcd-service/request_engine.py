@@ -46,7 +46,6 @@ class RequestEngine:
 		else:
 			to_return = {}
 			response = response['node']
-			print node
 			for node in response:
 				if (not node['dir']) and (node['key'] != self.hostname):
 					to_return[node['key']] = node['value']
