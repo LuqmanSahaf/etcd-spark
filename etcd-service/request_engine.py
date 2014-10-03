@@ -47,6 +47,10 @@ class RequestEngine:
 			to_return = {}
 			nodes = response['node']['nodes']
 			for node in nodes:
-				if ('dir' not in node) and (node['key'] != self.hostname):
+				if ('dir' in node):
+					continue
+				toks = node['key'].split('/')
+				name = toks[len(toks-1)]
+				if (name != self.hostname):
 					to_return[node['key']] = node['value']
 			return to_return
