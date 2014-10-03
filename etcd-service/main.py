@@ -59,7 +59,7 @@ class EtcdResolver:
 		"""
 		return self.request_engine.set(self.hostname, self.etcd_address,self.ttl)
 
-	def exception_handler(signal=signal.SIGTERM, frame=None):
+	def exception_handler(self,signal=signal.SIGTERM, frame=None):
 		f = open(self.hosts_file,'w')
 		f.write(self.default_hosts)
 		f.close()
