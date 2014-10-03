@@ -41,6 +41,7 @@ class RequestEngine:
 		proc = subprocess.Popen([request], stdout=subprocess.PIPE, shell=True)
 		(out, err) = proc.communicate()
 		response = json.loads(out)
+		print response
 		if "errorCode" in response:
 			return "key_not_found"
 		else:
