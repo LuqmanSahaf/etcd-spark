@@ -3,7 +3,9 @@
 #
 FROM apache-hadoop-hdfs-precise:1.2.1
 
-MAINTAINER amplab amp-docker@eecs.berkeley.edu
+MAINTAINER LuqmanSahaf lgsahaf@gmail.com
+
+RUN apt-get install curl
 
 ENV SCALA_VERSION 2.10.3
 ENV SPARK_VERSION 1.0.0
@@ -13,8 +15,8 @@ ENV PATH $SPARK_HOME:$SCALA_HOME/bin:$PATH
 
 # Install Scala
 ADD http://www.scala-lang.org/files/archive/scala-$SCALA_VERSION.tgz /
-RUN (cd / && gunzip < scala-$SCALA_VERSION.tgz)|(cd /opt && tar -xvf -)
-RUN rm /scala-$SCALA_VERSION.tgz
+RUN (cd / && gunzip < scala-$SCALA_VERSION.tgz)|(cd /opt && tar -xvf -) \
+rm /scala-$SCALA_VERSION.tgz
 
 # Install Spark 
 ADD http://d3kbcqa49mib13.cloudfront.net/spark-$SPARK_VERSION-bin-hadoop1.tgz /
