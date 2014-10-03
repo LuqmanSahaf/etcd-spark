@@ -36,6 +36,7 @@ class EtcdResolver:
 		Implement here the logic for updating the local names inside the container.
 		"""
 		self.hosts = self.request_engine.get_hosts_from_dir('/')
+		print self.hosts
 		to_write = '%s\n\n**********************************\n\n' % self.default_hosts
 
 		for host,ip in self.hosts:

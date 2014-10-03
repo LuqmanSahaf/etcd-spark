@@ -41,13 +41,11 @@ class RequestEngine:
 		proc = subprocess.Popen([request], stdout=subprocess.PIPE, shell=True)
 		(out, err) = proc.communicate()
 		response = json.loads(out)
-		print response
 		if "errorCode" in response:
 			return "key_not_found"
 		else:
 			to_return = {}
 			nodes = response['node']['nodes']
-			print nodes
 			for node in nodes:
 				if ('dir' not in node) and (node['key'] != self.hostname):
 					to_return[node['key']] = node['value']
