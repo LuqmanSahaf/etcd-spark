@@ -60,10 +60,10 @@ class EtcdResolver:
 		return self.request_engine.set(self.hostname, self.etcd_address,self.ttl)
 
 	def exception_handler(signal=signal.SIGTERM, frame=None):
-	    f = open(self.hosts_file,'w')
+		f = open(self.hosts_file,'w')
 		f.write(self.default_hosts)
 		f.close()
-	    sys.exit(0)
+		sys.exit(0)
  
 
 

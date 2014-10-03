@@ -4,6 +4,8 @@ env
 
 source /root/spark_files/configure_spark.sh
 
+export ETCD_ADDRESS=$1
+
 IP=$(ip -o -4 addr list eth0 | perl -n -e 'if (m{inet\s([\d\.]+)\/\d+\s}xms) { print $1 }')
 echo "MASTER_IP=$IP"
 
