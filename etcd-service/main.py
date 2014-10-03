@@ -38,7 +38,7 @@ class EtcdResolver:
 		self.hosts = self.request_engine.get_hosts_from_dir('/')
 		to_write = '%s\n\n**********************************\n\n' % self.default_hosts
 
-		for host,ip in hosts:
+		for host,ip in self.hosts:
 			to_write = to_write + ip + ' ' + host + '\n'
 
 		f = open(self.hosts_file,'w')
