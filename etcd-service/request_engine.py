@@ -46,7 +46,8 @@ class RequestEngine:
 			return "key_not_found"
 		else:
 			to_return = {}
-			response = response['node']
+			response = response['node']['nodes']
+			print response
 			for node in response:
 				if (not node['dir']) and (node['key'] != self.hostname):
 					to_return[node['key']] = node['value']
