@@ -29,7 +29,7 @@ class EtcdResolver:
 				self.update_etcd_server()
 				self.update_local_names()
 				self.last_update = time.time()
-			time.sleep(1.0*ttl/2.0)
+			time.sleep(1.0*self.ttl/2.0)
 
 	def update_local_names(self):
 		"""
