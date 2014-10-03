@@ -10,6 +10,9 @@ echo "MASTER_IP=$IP"
 echo "preparing Spark"
 prepare_spark $IP
 
+echo "starting etcd-service for name resolution"
+python /root/spark_files/etcd-service/main.py $1 &
+
 echo "starting Hadoop Namenode"
 sudo -u hdfs hadoop namenode -format > /dev/null 2>&1
 service hadoop-namenode start > /dev/null 2>&1
