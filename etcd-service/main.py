@@ -38,6 +38,7 @@ class EtcdResolver:
 			f = open(self.hosts_file,'w')
 			f.write(self.default_hosts)
 			f.close()
+			print "wrote into /etc/hosts file:\n%s" % self.default_hosts
 
 	def update_local_names(self):
 		"""
