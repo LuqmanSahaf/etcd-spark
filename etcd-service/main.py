@@ -24,12 +24,20 @@ class EtcdResolver:
 		"""
 		Run to resolve names continuously
 		"""
-		while True:
-			if (time.time() - self.last_update) > (1.0/2.0 * self.ttl):
-				self.update_etcd_server()
-				self.update_local_names()
-				self.last_update = time.time()
-			time.sleep(1.0*self.ttl/2.0)
+		try:
+			while True:
+				if (time.time() - self.last_update) > (1.0/2.0 * self.ttl):
+					self.update_etcd_server()
+					self.update_local_names()
+					self.last_update = time.time()
+				time.sleep(1.0*self.ttl/2.0)
+		except:
+			raise
+		finally:
+			# write only the default configuration into the file.
+			f = open(hosts_file,'w')
+			f.write(self.default_hosts)
+			f.close()
 
 	def update_local_names(self):
 		"""
@@ -37,7 +45,7 @@ class EtcdResolver:
 		"""
 		self.hosts = self.request_engine.get_hosts_from_dir('')
 		print self.hosts
-		to_write = '%s\n\n**********************************\n\n' % self.default_hosts
+		to_write = '%s\n\n#**********************************\n\n' % self.default_hosts
 
 		for host,ip in self.hosts.iteritems():
 			to_write = to_write + ip + ' ' + host + '\n'
