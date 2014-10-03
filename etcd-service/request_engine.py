@@ -42,10 +42,10 @@ class RequestEngine:
 		(out, err) = proc.communicate()
 		response = json.loads(out)
 		print response
+		to_return = {}
 		if "errorCode" in response:
-			return "key_not_found"
-		else:
-			to_return = {}
+			return to_return
+		elif 'nodes' in response['node']:
 			nodes = response['node']['nodes']
 			print nodes
 			for node in nodes:
@@ -56,4 +56,4 @@ class RequestEngine:
 
 				if (name != self.hostname):
 					to_return[name] = node['value']
-			return to_return
+		return to_return
