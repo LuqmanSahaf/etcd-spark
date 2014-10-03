@@ -50,7 +50,7 @@ class RequestEngine:
 				if ('dir' in node):
 					continue
 				toks = node['key'].split('/')
-				name = toks[len(toks-1)]
+				name = toks[len(toks)-1]
 				if (name != self.hostname):
 					to_return[node['key']] = node['value']
 			return to_return
