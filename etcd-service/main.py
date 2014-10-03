@@ -1,6 +1,6 @@
 from request_engine import RequestEngine
 from Constants import *
-import time, sys, getopt, subprocess
+import time, sys, getopt, subprocess, signal
 
 
 class EtcdResolver:
@@ -19,6 +19,7 @@ class EtcdResolver:
 		self.hosts_file = hosts_file
 		self.ttl = ttl
 		self.last_update = 0
+		signal.signal(signal.SIGTERM, exception_handler)
 		
 	def run(self):
 		"""
@@ -35,10 +36,7 @@ class EtcdResolver:
 			raise
 		finally:
 			# write only the default configuration into the file.
-			f = open(self.hosts_file,'w')
-			f.write(self.default_hosts)
-			f.close()
-			print "wrote into /etc/hosts file:\n%s" % self.default_hosts
+			exception_handler()
 
 	def update_local_names(self):
 		"""
@@ -60,6 +58,14 @@ class EtcdResolver:
 		Implement here the logic for updating the etcd_server running on the machine.
 		"""
 		return self.request_engine.set(self.hostname, self.etcd_address,self.ttl)
+
+	def exception_handler(signal=signal.SIGTERM, frame=None):
+	    f = open(self.hosts_file,'w')
+		f.write(self.default_hosts)
+		f.close()
+	    sys.exit(0)
+ 
+
 
 
 if __name__ == '__main__':
