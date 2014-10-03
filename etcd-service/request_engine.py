@@ -41,19 +41,18 @@ class RequestEngine:
 		proc = subprocess.Popen([request], stdout=subprocess.PIPE, shell=True)
 		(out, err) = proc.communicate()
 		response = json.loads(out)
-		print response
+		# print response
 		to_return = {}
 		if "errorCode" in response:
 			return to_return
 		elif 'nodes' in response['node']:
 			nodes = response['node']['nodes']
-			print nodes
+			# print nodes
 			for node in nodes:
 				if ('dir' in node):
 					continue
 				toks = node['key'].split('/')
 				name = toks[len(toks)-1]
-
 				if (name != self.hostname):
 					to_return[name] = node['value']
 		return to_return

@@ -39,7 +39,7 @@ class EtcdResolver:
 		print self.hosts
 		to_write = '%s\n\n**********************************\n\n' % self.default_hosts
 
-		for host,ip in self.hosts:
+		for host,ip in self.hosts.iteritems():
 			to_write = to_write + ip + ' ' + host + '\n'
 
 		f = open(self.hosts_file,'w')
