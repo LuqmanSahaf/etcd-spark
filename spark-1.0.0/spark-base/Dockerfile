@@ -5,8 +5,8 @@ FROM apache-hadoop-hdfs-precise:1.2.1
 
 MAINTAINER LuqmanSahaf lgsahaf@gmail.com
 
-RUN apt-get install -y curl python-pip \
-pip install json \
+RUN apt-get install -y curl python-pip; \
+pip install json; \
 apt-get remove python-pip
 
 ENV SCALA_VERSION 2.10.3
@@ -17,7 +17,7 @@ ENV PATH $SPARK_HOME:$SCALA_HOME/bin:$PATH
 
 # Install Scala
 ADD http://www.scala-lang.org/files/archive/scala-$SCALA_VERSION.tgz /
-RUN (cd / && gunzip < scala-$SCALA_VERSION.tgz)|(cd /opt && tar -xvf -) \
+RUN (cd / && gunzip < scala-$SCALA_VERSION.tgz)|(cd /opt && tar -xvf -); \
 rm /scala-$SCALA_VERSION.tgz
 
 # Install Spark
