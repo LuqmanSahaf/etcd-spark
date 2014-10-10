@@ -35,13 +35,17 @@ function configure_spark() {
 	# type is. If it's MASTER, then use hostname as master, else if it's WORKER
 	# then use the default  name "master"! Else use the provided IP as the master ip.
     if [ $1 == "" ]; then
-	if [ $SPARK_NODE_TYPE == "MASTER" ]; then
+	    if [ $SPARK_NODE_TYPE == "MASTER" ]; then
             sed -i s/__MASTER__/$(hostname)/ /opt/spark-$SPARK_VERSION/conf/spark-env.sh
         else
             sed -i s/__MASTER__/master/ /opt/spark-$SPARK_VERSION/conf/spark-env.sh
         fi
     else
         sed -i s/__MASTER__/$1/ /opt/spark-$SPARK_VERSION/conf/spark-env.sh
+    fi
+
+    if [ $SPARK_NODE_TYPE == "WORKER" ] ; then
+        sed -i s/__WORKER_PORT__/$2/ /opt/spark-$SPARK_VERSION/conf/spark-env.sh
     fi
 
     #sed -i s/__MASTER__/master/ /opt/spark-$SPARK_VERSION/conf/spark-env.sh
