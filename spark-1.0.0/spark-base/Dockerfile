@@ -7,7 +7,7 @@ MAINTAINER LuqmanSahaf lgsahaf@gmail.com
 
 RUN apt-get install -y curl python-pip; \
 pip install json; \
-apt-get remove python-pip
+apt-get remove -y python-pip
 
 ENV SCALA_VERSION 2.10.3
 ENV SPARK_VERSION 1.0.0
