@@ -4,7 +4,7 @@ import time, sys, getopt, subprocess, signal
 
 
 class EtcdResolver:
-	def __init__(self, etcd_address, hostname, etcd_port=ETCD_PORT, etcd_directory=ETCD_KEYS_DIRECTORY, hosts_file=HOSTS_FILE, ttl=15):
+	def __init__(self, etcd_address, hostname, etcd_port=ETCD_PORT, etcd_directory=ETCD_KEYS_DIRECTORY, hosts_file=HOSTS_FILE, ttl=30):
 		"""
 		Initialize the service for naming the containers (hosts) in the cluster.
 		!!! Assumption !!! The code assumes that the machine that hosts the container has same IP as the etcd_address!
@@ -20,18 +20,18 @@ class EtcdResolver:
 		self.ttl = ttl
 		self.last_update = 0
 		signal.signal(signal.SIGTERM, self.exception_handler)
-		
+
 	def run(self):
 		"""
 		Run to resolve names continuously
 		"""
 		try:
 			while True:
-				if (time.time() - self.last_update) > (1.0/2.0 * self.ttl):
+				if (time.time() - self.last_update) > (0.5* self.ttl):
 					self.update_etcd_server()
 					self.update_local_names()
 					self.last_update = time.time()
-				time.sleep(1.0*self.ttl/2.0)
+				time.sleep(0.5*self.ttl)
 		except:
 			raise
 		finally:
@@ -64,7 +64,7 @@ class EtcdResolver:
 		f.write(self.default_hosts)
 		f.close()
 		sys.exit(0)
- 
+
 
 
 
@@ -77,7 +77,7 @@ if __name__ == '__main__':
 
 	help_string = 'usage:\n main.py [OPTION]\n\nOptions:\n-e\t--etcd_address <etcd_server_address>\n'
 	help_string = help_string + '-h\t--help to print this message'
-	
+
 	argv = sys.argv
 	if '-e' not in argv:
 		print "You must specify the etcd_server address"
@@ -86,7 +86,7 @@ if __name__ == '__main__':
 
 	index = argv.index('-e')
 	etcd_address = argv[index+1]
-	
+
 	# try:
 	# 	opts, args = getopt.getopt(sys.argv[1:],["e","h"], ["etcd_address","help"])
 	# except getopt.GetoptError:
