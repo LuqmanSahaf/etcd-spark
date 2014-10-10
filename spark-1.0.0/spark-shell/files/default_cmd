@@ -5,7 +5,12 @@ source /root/spark_files/configure_spark.sh
 env
 
 echo "preparing Spark"
-prepare_spark "master"
+prepare_spark $1
+
+echo "starting etcd-service for name resolution"
+cd /root/spark_files/etcd-service
+python /root/spark_files/etcd-service/main.py -e $2 &
+cd
 
 echo "adding test data to HDFS"
 cp /root/spark_shell_files/test.txt /tmp

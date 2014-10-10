@@ -8,6 +8,11 @@ echo "WORKER_IP=$IP"
 echo "preparing Spark"
 prepare_spark $1
 
+echo "starting etcd-service for name resolution"
+cd /root/spark_files/etcd-service
+python /root/spark_files/etcd-service/main.py -e $2 &
+cd
+
 echo "starting Hadoop Datanode"
 service hadoop-datanode start
 

@@ -1,7 +1,7 @@
 import json
 import subprocess
 
-class RequestEngine{
+class RequestEngine:
 	def __init__(self, etcd_address,etcd_port, etcd_directory, hostname):
 		self.etcd_address = etcd_address
 		self.etcd_port = etcd_port
@@ -22,7 +22,8 @@ class RequestEngine{
 			return response['node']['value']
 
 	def set(self, key, value, ttl):
-		request = 'curl -L http://%s:%s/v2/keys/%s/%s -XPUT -d value="%s" -d ttl=%i' % (self.etcd_address, self.etcd_port, self.etcd_directory, key, value, ttl)
+		request = 'curl -L -XPUT http://%s:%s/v2/keys/%s%s -d value=%s -d ttl=%i' % (self.etcd_address, self.etcd_port, self.etcd_directory, key, value, ttl)
+		print request
 		proc = subprocess.Popen([request], stdout=subprocess.PIPE, shell=True)
 		(out, err) = proc.communicate()
 		response = json.loads(out)
@@ -36,15 +37,22 @@ class RequestEngine{
 		!!! Assumption !!! The directory being provided should contain a '/' as a prefix.
 		"""
 		request = 'curl -L http://%s:%s/v2/keys/%s%s?recursive=true' % (self.etcd_address, self.etcd_port, self.etcd_directory, directory)
+		print request
 		proc = subprocess.Popen([request], stdout=subprocess.PIPE, shell=True)
 		(out, err) = proc.communicate()
 		response = json.loads(out)
+		# print response
+		to_return = {}
 		if "errorCode" in response:
-			return "key_not_found"
-		else:
-			to_return = {}
-			response = response['node']
-			for node in response:
-				if not node['dir'] and node['key'] not self.hostname:
-					to_return[node['key']] = node['value']
 			return to_return
+		elif 'nodes' in response['node']:
+			nodes = response['node']['nodes']
+			# print nodes
+			for node in nodes:
+				if ('dir' in node):
+					continue
+				toks = node['key'].split('/')
+				name = toks[len(toks)-1]
+				if (name != self.hostname):
+					to_return[name] = node['value']
+		return to_return

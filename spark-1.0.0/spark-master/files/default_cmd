@@ -4,8 +4,6 @@ env
 
 source /root/spark_files/configure_spark.sh
 
-export ETCD_ADDRESS=$1
-
 IP=$(ip -o -4 addr list eth0 | perl -n -e 'if (m{inet\s([\d\.]+)\/\d+\s}xms) { print $1 }')
 echo "MASTER_IP=$IP"
 
@@ -13,7 +11,9 @@ echo "preparing Spark"
 prepare_spark $IP
 
 echo "starting etcd-service for name resolution"
-python /root/spark_files/etcd-service/main.py $1 &
+cd /root/spark_files/etcd-service
+python /root/spark_files/etcd-service/main.py -e $1 &
+cd
 
 echo "starting Hadoop Namenode"
 sudo -u hdfs hadoop namenode -format > /dev/null 2>&1
