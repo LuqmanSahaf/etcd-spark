@@ -23,7 +23,7 @@ class RequestEngine:
 
 	def set(self, key, value, ttl):
 		request = 'curl -L -XPUT http://%s:%s/v2/keys/%s%s -d value=%s -d ttl=%i' % (self.etcd_address, self.etcd_port, self.etcd_directory, key, value, ttl)
-		print request
+		# print request
 		proc = subprocess.Popen([request], stdout=subprocess.PIPE, shell=True)
 		(out, err) = proc.communicate()
 		response = json.loads(out)
@@ -37,7 +37,7 @@ class RequestEngine:
 		!!! Assumption !!! The directory being provided should contain a '/' as a prefix.
 		"""
 		request = 'curl -L http://%s:%s/v2/keys/%s%s?recursive=true' % (self.etcd_address, self.etcd_port, self.etcd_directory, directory)
-		print request
+		# print request
 		proc = subprocess.Popen([request], stdout=subprocess.PIPE, shell=True)
 		(out, err) = proc.communicate()
 		response = json.loads(out)
