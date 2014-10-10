@@ -22,7 +22,7 @@ function deploy_spark_files() {
     deploy_hadoop_files
     cp /root/spark_files/spark-env.sh /opt/spark-$SPARK_VERSION/conf/
     cp /root/spark_files/log4j.properties /opt/spark-$SPARK_VERSION/conf/
-}		
+}
 
 function configure_spark() {
     configure_hadoop $1
@@ -34,15 +34,15 @@ function configure_spark() {
 	# If the user does not provide the IP of master, then check what the node
 	# type is. If it's MASTER, then use hostname as master, else if it's WORKER
 	# then use the default  name "master"! Else use the provided IP as the master ip.
-    if [$1 == ""]; then
-	if [ $SPARK_NODE_TYPE == "MASTER"]; then
+    if [ $1 == "" ]; then
+	if [ $SPARK_NODE_TYPE == "MASTER" ]; then
             sed -i s/__MASTER__/$(hostname)/ /opt/spark-$SPARK_VERSION/conf/spark-env.sh
         else
             sed -i s/__MASTER__/master/ /opt/spark-$SPARK_VERSION/conf/spark-env.sh
         fi
     else
         sed -i s/__MASTER__/$1/ /opt/spark-$SPARK_VERSION/conf/spark-env.sh
-    fi    
+    fi
 
     #sed -i s/__MASTER__/master/ /opt/spark-$SPARK_VERSION/conf/spark-env.sh
     #CHANGE ENDS HERE#

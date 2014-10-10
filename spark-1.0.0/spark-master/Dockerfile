@@ -1,6 +1,6 @@
 # Spark
 FROM spark-base:1.0.0
-MAINTAINER amplab amp-docker@eecs.berkeley.edu
+MAINTAINER LuqmanSahaf lgsahaf@gmail.com
 
 ENV SPARK_NODE_TYPE "MASTER"
 
