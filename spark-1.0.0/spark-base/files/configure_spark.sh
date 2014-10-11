@@ -44,7 +44,7 @@ function configure_spark() {
         sed -i s/__MASTER__/$1/ /opt/spark-$SPARK_VERSION/conf/spark-env.sh
     fi
 
-    if [ $SPARK_NODE_TYPE == "WORKER" ];
+    if [ $SPARK_NODE_TYPE == "WORKER" ]; then
         sed -i s/__WORKERPORT__/$2/ /opt/spark-$SPARK_VERSION/conf/spark-env.sh
     fi
 
