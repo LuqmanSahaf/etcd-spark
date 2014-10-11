@@ -8,6 +8,11 @@ echo "WORKER_IP=$IP"
 echo "preparing Spark"
 prepare_spark $1 $2
 
+echo "node type: $SPARK_NODE_TYPE"
+if [ $SPARK_NODE_TYPE == "WORKER" ]; then
+    echo $SPARK_NODE_TYPE
+fi
+
 echo "starting etcd-service for name resolution"
 cd /root/spark_files/etcd-service
 python /root/spark_files/etcd-service/main.py -e $3 &
