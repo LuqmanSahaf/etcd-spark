@@ -6,9 +6,7 @@ IP=$(ip -o -4 addr list eth0 | perl -n -e 'if (m{inet\s([\d\.]+)\/\d+\s}xms) { p
 echo "WORKER_IP=$IP"
 
 echo "preparing Spark"
-echo "inputs: $1, $2"
 prepare_spark $1 $2
-cat /opt/spark-$SPARK_VERSION/conf/spark-env.sh
 
 echo "starting etcd-service for name resolution"
 cd /root/spark_files/etcd-service

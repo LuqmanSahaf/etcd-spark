@@ -17,4 +17,4 @@ export SPARK_LOCAL_DIR=/tmp/spark
 #SPARK_DAEMON_JAVA_OPTS+=" -Dspark.akka.logLifecycleEvents=true "
 #export SPARK_DAEMON_JAVA_OPTS
 export JAVA_HOME=__JAVA_HOME__
-SPARK_WORKER_PORT=__WORKER_PORT__
+export SPARK_WORKER_PORT=__WORKER_PORT__
