@@ -8,6 +8,8 @@ echo "WORKER_IP=$IP"
 echo "preparing Spark"
 prepare_spark $1 $2
 
+echo "Java home: $JAVA_HOME"
+
 echo "starting etcd-service for name resolution"
 cd /root/spark_files/etcd-service
 python /root/spark_files/etcd-service/main.py -e $3 &
