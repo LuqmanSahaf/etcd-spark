@@ -45,6 +45,7 @@ function configure_spark() {
     fi
 
     if [ $SPARK_NODE_TYPE == "WORKER" ]; then
+        echo "replacing with $2"
         sed -i s/__WORKER_PORT__/$2/ /opt/spark-$SPARK_VERSION/conf/spark-env.sh
     fi
 
