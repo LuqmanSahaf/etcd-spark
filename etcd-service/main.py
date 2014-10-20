@@ -1,13 +1,13 @@
 from request_engine import RequestEngine
 from Constants import *
-import time, sys, getopt, subprocess, signal
-
+import time, subprocess, signal
+from sys import argv, exit
+from argparse import ArgumentParser
 
 class EtcdResolver:
-	def __init__(self, etcd_address, hostname, etcd_port=ETCD_PORT, etcd_directory=ETCD_KEYS_DIRECTORY, hosts_file=HOSTS_FILE, ttl=30):
+	def __init__(self, hostname, host_address, etcd_address, etcd_port, etcd_directory, hosts_file, ttl):
 		"""
 		Initialize the service for naming the containers (hosts) in the cluster.
-		!!! Assumption !!! The code assumes that the machine that hosts the container has same IP as the etcd_address!
 		"""
 		self.etcd_address = etcd_address
 		self.request_engine = RequestEngine(etcd_address, etcd_port, etcd_directory, hostname)
@@ -23,26 +23,27 @@ class EtcdResolver:
 
 	def run(self):
 		"""
-		Run to resolve names continuously
+		Run to resolve names indefinitely
 		"""
 		try:
 			while True:
-				if (time.time() - self.last_update) > (0.5* self.ttl):
-					self.update_etcd_server()
+				if (time.time() - self.last_update) > (0.75* self.ttl):
+					while not self.update_etcd_server():
+						continue
 					self.update_local_names()
 					self.last_update = time.time()
-				time.sleep(0.5*self.ttl)
+				time.sleep(0.75*self.ttl)
 		except:
 			raise
 		finally:
-			# write only the default configuration into the file.
+			# write back the default configuration into the file.
 			self.exception_handler()
 
 	def update_local_names(self):
 		"""
-		Implement here the logic for updating the local names inside the container.
+		Fetch name:address from etcd_address
 		"""
-		self.hosts = self.request_engine.get_hosts_from_dir('')
+		self.hosts = self.request_engine.get_hosts_from_dir('/')
 		# print self.hosts
 		to_write = '%s\n\n#**********************************\n\n' % self.default_hosts
 
@@ -55,55 +56,47 @@ class EtcdResolver:
 
 	def update_etcd_server(self):
 		"""
-		Implement here the logic for updating the etcd_server running on the machine.
+		Update the entry for the hostname to machine_address resolution.
+		host_address corresponds to the address of address on which the
+		container is hosted.
 		"""
-		return self.request_engine.set(self.hostname, self.etcd_address,self.ttl)
+		return self.request_engine.set(self.hostname, self.host_address,self.ttl)
 
 	def exception_handler(self,signal=signal.SIGTERM, frame=None):
+		"""
+		To handle the exceptions. If the program is closed it should remove the
+		entries gracefully from hosts file, set by itself.
+		"""
 		f = open(self.hosts_file,'w')
 		f.write(self.default_hosts)
 		f.close()
-		sys.exit(0)
-
-
-
+		exit(0)
 
 if __name__ == '__main__':
+	# Parse the input arguments for setting the variables.
+	parser = ArgumentParser('main.py')
+	parser.add_argument('etcd_address', action='store',
+		help='IP address of the etcd server')
+	parser.add_argument('host_address', action='store',
+		help='IP address of the host machine on which the container is going to run.'+
+			' This is different from container local IP.')
+	parser.add_argument('--etcd_port', '-p', type=int, default=ETCD_PORT, action='store',
+		help='Port on which etcd server is listening. Default: 4001')
+	parser.add_argument('--etcd_directory', '-d', default=ETCD_KEYS_DIRECTORY,
+		action='store',
+		help='Directory in etcd to store information. Default: etcd_spark')
+	parser.add_argument('--hosts_file', '-f', default=HOSTS_FILE, action='store',
+		help='Which file to add names of servers registered on etcd service')
+	parser.add_argument('--ttl', '-t', type=int, default=TTL, action='store',
+		help='Time-to-live for the entries inside etcd. In case of failure,'+
+			'the entry will expire after ttl. Default: ttl=60 (seconds)')
+	args = parser.parse_args(argv[1:])
 
 	request = 'hostname'
-	proc = subprocess.Popen([request], stdout=subprocess.PIPE, shell=True)
+	proc = subprocess.Popen([request], stdout=subprocess.PIPE)
 	(out, err) = proc.communicate()
 	hostname = out.strip()
 
-	help_string = 'usage:\n main.py [OPTION]\n\nOptions:\n-e\t--etcd_address <etcd_server_address>\n'
-	help_string = help_string + '-h\t--help to print this message'
-
-	argv = sys.argv
-	if '-e' not in argv:
-		print "You must specify the etcd_server address"
-		print help_string
-		sys.exit(2)
-
-	index = argv.index('-e')
-	etcd_address = argv[index+1]
-
-	# try:
-	# 	opts, args = getopt.getopt(sys.argv[1:],["e","h"], ["etcd_address","help"])
-	# except getopt.GetoptError:
-	# 	print 'test.py -i <inputfile> -o <outputfile>'
-	# 	sys.exit(2)
-
-	# if '-e' not in opts or '--etcd_address':
-	# 	print "You must specify the etcd_server address"
-	# 	print help_string
-	# 	sys.exit(2)
-
-	# for opt, arg in opts:
-	# 	if opt == '-h' or opt == '--help':
-	# 		print help_string
-	# 		sys.exit()
-	# 	elif opt in ("-e", "--etcd_address"):
-	# 		etcd_address = arg
-
-	resolver = EtcdResolver(etcd_address, hostname)
+	resolver = EtcdResolver(hostname, args.host_address, args.etcd_address,
+				args.etcd_port, args.etcd_directory, args.hosts_file, args.ttl)
 	resolver.run()
