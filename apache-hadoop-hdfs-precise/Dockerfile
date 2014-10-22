@@ -1,7 +1,7 @@
 # Base Ubuntu Precise 12.04 LTS image
 #
 FROM ubuntu:precise
-MAINTAINER amplab amp-docker@eecs.berkeley.edu
+MAINTAINER luckysahaf lgsahaf@gmail.com
 
 # Setup a volume for data
 VOLUME ["/data"]

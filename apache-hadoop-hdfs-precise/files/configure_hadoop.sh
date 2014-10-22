@@ -19,15 +19,16 @@ function deploy_hadoop_files() {
     chmod go-rwx /root/.ssh/id_rsa
     cp /root/hadoop_files/authorized_keys /root/.ssh/authorized_keys
     chmod go-wx /root/.ssh/authorized_keys
-}		
+}
 
 function configure_hadoop() {
     sed -i s/__MASTER__/$1/ /etc/hadoop/core-site.xml
+    sed -i s/__DATANODE__/$2/ /etc/hadoop/hdfs-site.xml
     sed -i s/"JAVA_HOME=\/usr\/lib\/jvm\/java-6-sun"/"JAVA_HOME=\/usr\/lib\/jvm\/java-7-openjdk-amd64"/ /etc/hadoop/hadoop-env.sh
 }
 
 function prepare_hadoop() {
     create_hadoop_directories
     deploy_hadoop_files
-    configure_hadoop $1
+    configure_hadoop $@
 }
