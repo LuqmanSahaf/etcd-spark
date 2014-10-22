@@ -1,3 +1,5 @@
+#!/bin/bash
+
 if [[ "$USER" != "root" ]]; then
     echo "please run as: sudo $0"
     exit 1
