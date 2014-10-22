@@ -12,11 +12,13 @@ mkdir $worker_dir
 # get default configurations from etcd server
 to_publish=$(etcdctl get /etcd_spark/$master/$worker/to_publish)
 datanode_port=$(etcdctl get /etcd_spark/$master/$worker/DATANODE_PORT)
-spark_env=$(etcdctl get /etcd_spark/$master/spark_env)
+spark_env=$(etcdctl get /etcd_spark/$master//$worker/spark_env)
 worker_ui=$(etcdctl get /etcd_spark/$master/$worker/WORKER_UI)
 worker_port=$(etcdctl get /etcd_spark/$master/$worker/WORKER_PORT)
+log4j=$(etcdctl get /etcd_spark/$master/log4j)
 
 # saving into files
+echo $log4j > $worker_dir/log4j.properties
 echo $spark_env > $worker_dir/spark-env.sh
 echo "export SPARK_WORKER_PORT=$worker_port" >> $worker_dir/spark-env.sh
 

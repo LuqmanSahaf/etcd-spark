@@ -12,9 +12,11 @@ mkdir $driver_dir
 # get default configurations from etcd server
 spark_defaults=$(etcdctl get /etcd_spark/$master/$driver/spark_defaults)
 to_publish=$(etcdctl get /etcd_spark/$master/$driver/to_publish)
-spark_env=$(etcdctl get /etcd_spark/$master/spark_env)
+spark_env=$(etcdctl get /etcd_spark/$master/$driver/spark_env)
+log4j=$(etcdctl get /etcd_spark/$master/log4j)
 
 # saving into files
+echo $log4j > $driver_dir/log4j.properties
 echo $spark_env > $driver_dir/spark-env.sh
 echo $spark_defaults > $driver_dir/spark-defaults.conf
 
@@ -35,4 +37,4 @@ done
 env_args="-e ETCD_ADDRESS=$ETCD_IP -e ETCD_PORT=$ETCD_PORT -e HOST_ADDRESS=$private_ip"
 
 # start docker container
-docker run --name $driver -h $driver $publish_args $env_args -v $driver_dir:/home/run luckysahaf/spark-driver:1.1.0 $master
+docker run --name $driver -h $driver $publish_args $env_args -v $driver_dir:/home/run luckysahaf/spark-shell:1.1.0 $master
