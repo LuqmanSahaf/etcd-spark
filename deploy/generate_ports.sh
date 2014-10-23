@@ -9,10 +9,8 @@ cat master/config | {
     drivers=${master_config["drivers"]}
     workers=${master_config["workers"]}
 
-echo $drivers $workers
-
     default_url=http://$ETCD_IP:$ETCD_PORT/v2/keys/etcd_spark/$master
-echo $default_url
+
     #generate a random port between 12345 and 65535
     PORT=$(( ( RANDOM % 53190 )  + 12345 ))
 
@@ -47,10 +45,9 @@ echo $default_url
         to_publish="${driverUI[$i]} ${driver_port[$i]} ${broadcast[$i]} ${replClassServer[$i]} ${fileserver[$i]}"
 
         # Put the files in etcd server
-        echo curl -L -XPUT "${default_url}/driver${i}/spark_defaults" --data-urlencode value@driver${i}/spark-defaults.conf
-	echo curl -L -XPUT "${default_url}/driver${i}/to_publish" -d value=\"${to_publish}\"
-	curl -L -XPUT "${default_url}/driver${i}/spark_defaults" --data-urlencode value@driver${i}/spark-defaults.conf
+        curl -L -XPUT "${default_url}/driver${i}/spark_defaults" --data-urlencode value@driver${i}/spark-defaults.conf
         curl -L -XPUT "${default_url}/driver${i}/to_publish" -d value=\"${to_publish}\"
+
         PORT=$(( $PORT +  ($i + 1) * 7 ))
     done
 
@@ -68,10 +65,10 @@ echo $default_url
             to_publish="$to_publish ${executor[$k]} ${blockManager[$k]}"
         done
 
-        curl -L -XPUT "$default_url/worker$j/to_publish" --data-urlencode -d value=${to_publish}
+        curl -L -XPUT "$default_url/worker$j/to_publish" --data-urlencode -d value=\"${to_publish}\"
         curl -L -XPUT "$default_url/worker$j/WORKER_UI" --data-urlencode -d value=${workerUI[$j]}
         curl -L -XPUT "$default_url/worker$j/WORKER_PORT" --data-urlencode -d value=${worker[$j]}
-        curl -L -XPUT "$default_url/worker$j/DATANODE_PORT" -d value=${datanode[$j]}
+        curl -L -XPUT "$default_url/worker$j/DATANODE_PORT" -d value=\"${datanode[$j]}\"
 
         PORT=$(( $PORT +  ($j + 1) * 3 ))
     done
