@@ -29,8 +29,7 @@ class EtcdResolver:
 		try:
 			while True:
 				if (time.time() - self.last_update) > (0.75* self.ttl):
-					while not self.update_etcd_server():
-						continue
+					self.update_etcd_server()
 					self.update_local_names()
 					self.last_update = time.time()
 				time.sleep(0.75*self.ttl)
