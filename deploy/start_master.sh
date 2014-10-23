@@ -2,7 +2,6 @@
 
 master=$1
 private_ip=$2
-master_mem=$3
 
 master_dir=/home/$master
 

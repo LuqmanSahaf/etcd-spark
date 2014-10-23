@@ -1,10 +1,10 @@
 #!/bin/sh
 
 master=$1
-driver=$2
+driver=driver$2
 private_ip=$3
 
-driver_dir=/home/driver
+driver_dir=/home/$driver
 
 rm -r $driver_dir
 mkdir $driver_dir
