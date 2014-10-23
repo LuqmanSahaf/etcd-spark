@@ -12,9 +12,9 @@ master=$1
 # driver*/spark_env
 # driver*/to_publish
 
-default_url=http://$ETCD_IP:$ETCD_PORT/v2/keys/etcd_spark
-drivers=$(etcdctl get $default_url/$master/drivers)
-workers=$(etcdctl get $default_url/$master/workers)
+default_url=http://$ETCD_IP:$ETCD_PORT/v2/keys/etcd_spark/$master
+drivers=$(etcdctl get etcd_spark/$master/drivers)
+workers=$(etcdctl get etcd_spark/$master/workers)
 
 for (( i=1 ; i<=drivers ; i++ ))
 do
