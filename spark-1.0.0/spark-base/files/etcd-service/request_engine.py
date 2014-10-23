@@ -12,9 +12,14 @@ class RequestEngine:
 		"""
 		!!! Assumption !!! The key being provided should contain a '/' as a prefix.
 		"""
-		request = 'curl -L http://%s:%s/v2/keys/%s%s' % (self.etcd_address, self.etcd_port, self.etcd_directory, key)
-		proc = subprocess.Popen([request], stdout=subprocess.PIPE, shell=True)
+		request = ['curl', '-L', 'http://%s:%s/v2/keys/%s%s' % (self.etcd_address, self.etcd_port, self.etcd_directory, key)]
+		proc = subprocess.Popen([request], stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 		(out, err) = proc.communicate()
+		if out == '':
+			index = err.find('curl: (')
+			if index >= 0:
+				print err[index:]
+			return ''
 		response = json.loads(out)
 		if "errorCode" in response:
 			return "key_not_found"
@@ -22,10 +27,15 @@ class RequestEngine:
 			return response['node']['value']
 
 	def set(self, key, value, ttl):
-		request = 'curl -L -XPUT http://%s:%s/v2/keys/%s%s -d value=%s -d ttl=%i' % (self.etcd_address, self.etcd_port, self.etcd_directory, key, value, ttl)
+		request = ['curl', '-L', '-XPUT', 'http://%s:%s/v2/keys/%s%s -d value=%s -d ttl=%i' % (self.etcd_address, self.etcd_port, self.etcd_directory, key, value, ttl)]
 		# print request
-		proc = subprocess.Popen([request], stdout=subprocess.PIPE, shell=True)
+		proc = subprocess.Popen([request], stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 		(out, err) = proc.communicate()
+		if out == '':
+			index = err.find('curl: (')
+			if index >= 0:
+				print err[index:]
+			return False
 		response = json.loads(out)
 		if "errorCode" in response:
 			return False
@@ -36,13 +46,18 @@ class RequestEngine:
 		"""
 		!!! Assumption !!! The directory being provided should contain a '/' as a prefix.
 		"""
-		request = 'curl -L http://%s:%s/v2/keys/%s%s?recursive=true' % (self.etcd_address, self.etcd_port, self.etcd_directory, directory)
+		to_return = {}
+		request = ['curl', '-L', 'http://%s:%s/v2/keys/%s%s?recursive=true' % (self.etcd_address, self.etcd_port, self.etcd_directory, directory)]
 		# print request
-		proc = subprocess.Popen([request], stdout=subprocess.PIPE, shell=True)
+		proc = subprocess.Popen([request], stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 		(out, err) = proc.communicate()
+		if out == '':
+			index = err.find('curl: (')
+			if index >= 0:
+				print err[index:]
+			return to_return
 		response = json.loads(out)
 		# print response
-		to_return = {}
 		if "errorCode" in response:
 			return to_return
 		elif 'nodes' in response['node']:
