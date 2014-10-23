@@ -1,18 +1,18 @@
 #!/bin/bash
 
-default_url=http://$ETCD_IP:$ETCD_PORT/v2/keys/etcd_service/$master
-
 declare -A master_config
 cat master/config | {
     while read key value; do
         master_config[$key]=$value
     done
-    master=${master_config["master.name"]}
+    master=${master_config["name"]}
     drivers=${master_config["drivers"]}
     workers=${master_config["workers"]}
 
+echo $drivers $workers
 
-
+    default_url=http://$ETCD_IP:$ETCD_PORT/v2/keys/etcd_spark/$master
+echo $default_url
     #generate a random port between 12345 and 65535
     PORT=$(( ( RANDOM % 53190 )  + 12345 ))
 
@@ -20,13 +20,13 @@ cat master/config | {
     # UI. master_port, hadoop_namenode
     master_ui=$PORT
     master_port=$(( $PORT + 1 ))
-    namenode=$(( $PORT + 2))
+    namenode=$(( $PORT + 2 ))
 
     PORT=$(( $PORT + 3 ))
 
     # Driver ports:
     # driver, broadcast, replClassServer, fileserver, UI
-    for (( i=1; i<=$drivers ; i++))
+    for (( i=1; i<=$drivers ; i++ ))
     do
         driverUI[$i]=$PORT
         driver_port[$i]=$(( $PORT + 1 ))
@@ -47,30 +47,31 @@ cat master/config | {
         to_publish="${driverUI[$i]} ${driver_port[$i]} ${broadcast[$i]} ${replClassServer[$i]} ${fileserver[$i]}"
 
         # Put the files in etcd server
-        curl -L -XPUT ${default_url}/driver${i}/spark_defaults --data-urlencode value@driver${i}/spark-defaults.conf
-        curl -L -XPUT ${default_url}/driver${i}/to_publish -d value=${to_publish}
-
+        echo curl -L -XPUT "${default_url}/driver${i}/spark_defaults" --data-urlencode value@driver${i}/spark-defaults.conf
+	echo curl -L -XPUT "${default_url}/driver${i}/to_publish" -d value=\"${to_publish}\"
+	curl -L -XPUT "${default_url}/driver${i}/spark_defaults" --data-urlencode value@driver${i}/spark-defaults.conf
+        curl -L -XPUT "${default_url}/driver${i}/to_publish" -d value=\"${to_publish}\"
         PORT=$(( $PORT +  ($i + 1) * 7 ))
     done
 
     #Worker ports:
     # worker, blockManager, executor, datanode (hadoop) ,UI
-    for (( j=1; j<=$workers ; j++))
+    for (( j=1; j<=$workers ; j++ ))
     do
         workerUI[$j]=$PORT
         worker[$j]=$(( $PORT + 1 ))
         datanode[$j]=$(( $PORT + 2 ))
         to_publish="${workerUI[$j]} ${worker[$j]} ${datanode[$j]} "
 
-        for (( k=1; k<=$d ; k++))
+        for (( k=1; k<=$drivers ; k++ ))
         do
             to_publish="$to_publish ${executor[$k]} ${blockManager[$k]}"
         done
 
-        curl -L -XPUT $default_url/worker$j/to_publish --data-urlencode -d value=${to_publish}
-        curl -L -XPUT $default_url/worker$j/WORKER_UI --data-urlencode -d value=${workerUI[$j]}
-        curl -L -XPUT $default_url/worker$j/WORKER_PORT --data-urlencode -d value=${worker[$j]}
-        curl -L -XPUT $default_url/worker$j/DATANODE_PORT -d value=${datanode[$j]}
+        curl -L -XPUT "$default_url/worker$j/to_publish" --data-urlencode -d value=${to_publish}
+        curl -L -XPUT "$default_url/worker$j/WORKER_UI" --data-urlencode -d value=${workerUI[$j]}
+        curl -L -XPUT "$default_url/worker$j/WORKER_PORT" --data-urlencode -d value=${worker[$j]}
+        curl -L -XPUT "$default_url/worker$j/DATANODE_PORT" -d value=${datanode[$j]}
 
         PORT=$(( $PORT +  ($j + 1) * 3 ))
     done
