@@ -34,7 +34,8 @@ class EtcdResolver:
 					self.update_local_names()
 					self.last_update = time.time()
 				time.sleep(0.75*self.ttl)
-		except:
+		except Exception, err:
+			print err
 			raise
 		finally:
 			# write back the default configuration into the file.
