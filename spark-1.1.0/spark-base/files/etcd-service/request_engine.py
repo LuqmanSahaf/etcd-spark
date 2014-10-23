@@ -13,7 +13,7 @@ class RequestEngine:
 		!!! Assumption !!! The key being provided should contain a '/' as a prefix.
 		"""
 		request = ['curl', '-L', 'http://%s:%s/v2/keys/%s%s' % (self.etcd_address, self.etcd_port, self.etcd_directory, key)]
-		proc = subprocess.Popen([request], stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+		proc = subprocess.Popen(request, stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 		(out, err) = proc.communicate()
 		if out == '':
 			index = err.find('curl: (')
