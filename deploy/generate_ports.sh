@@ -60,17 +60,17 @@ cat master/config | {
         workerUI[$j]=$PORT
         worker[$j]=$(( $PORT + 1 ))
         datanode[$j]=$(( $PORT + 2 ))
-        publish="${workerUI[$j]} ${worker[$j]} ${datanode[$j]} "
+        to_publish="${workerUI[$j]} ${worker[$j]} ${datanode[$j]} "
 
         for (( k=1; k<=$d ; k++))
         do
-            publish="$publish ${executor[$k]} ${blockManager[$k]}"
+            to_publish="$to_publish ${executor[$k]} ${blockManager[$k]}"
         done
 
         curl -L $default_url/worker$j/to_publish -XPUT --data-urlencode -d value=$to_publish
-        curl -L $default_url/worker$j/WORKER_UI -XPUT --data-urlencode -d value=$workerUI[$j]
-        curl -L $default_url/worker$j/WORKER_PORT -XPUT --data-urlencode -d value=$worker[$j]
-        curl -L $default_url/worker$j/DATANODE_PORT -XPUT --data-urlencode ${datanode[$j]}
+        curl -L $default_url/worker$j/WORKER_UI -XPUT --data-urlencode -d value=${workerUI[$j]}
+        curl -L $default_url/worker$j/WORKER_PORT -XPUT --data-urlencode -d value=${worker[$j]}
+        curl -L $default_url/worker$j/DATANODE_PORT -XPUT -d value=${datanode[$j]}
 
         PORT=$(( $PORT +  ($j + 1) * 3 ))
     done
