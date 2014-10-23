@@ -17,7 +17,7 @@ cat master/config | {
 
     curl -L $default_url/${master_config["name"]}/name -XPUT -d value=${master_config["name"]}
     curl -L $default_url/${master_config["name"]}/spark_env -XPUT --data-urlencode value@master/spark-env.sh
-    curl -L $default_url/${master_config["name"]}/log4j -XPUT --data-urlencode value@master/log4j.properties
+    curl -L $default_url/${master_config["name"]}/log4j -XPUT --data-urlencode value@log4j.properties
 
     for (( i=1; i<=$drivers ; i++ ))
     do
