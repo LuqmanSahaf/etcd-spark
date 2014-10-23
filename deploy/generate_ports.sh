@@ -1,5 +1,7 @@
 #!/bin/bash
 
+default_url=http://$ETCD_IP:$ETCD_PORT/v2/keys/etcd_service/$master
+
 declare -A master_config
 cat master/config | {
     while read key value; do
@@ -9,7 +11,7 @@ cat master/config | {
     drivers=${master_config["drivers"]}
     workers=${master_config["workers"]}
 
-    default_url=http://$ETCD_IP:$ETCD_PORT/v2/keys/etcd_service/$master
+
 
     #generate a random port between 12345 and 65535
     PORT=$(( ( RANDOM % 53190 )  + 12345 ))
@@ -20,18 +22,12 @@ cat master/config | {
     master_port=$(( $PORT + 1 ))
     namenode=$(( $PORT + 2))
 
-    curl -L $default_url/name -XPUT -d value=$master
-
-
-
     PORT=$(( $PORT + 3 ))
 
     # Driver ports:
     # driver, broadcast, replClassServer, fileserver, UI
     for (( i=1; i<=$drivers ; i++))
     do
-        mkdir driver$i
-
         driverUI[$i]=$PORT
         driver_port[$i]=$(( $PORT + 1 ))
         broadcast[$i]=$(( $PORT + 2 ))
@@ -61,8 +57,6 @@ cat master/config | {
     # worker, blockManager, executor, datanode (hadoop) ,UI
     for (( j=1; j<=$workers ; j++))
     do
-        mkdir worker$j
-
         workerUI[$j]=$PORT
         worker[$j]=$(( $PORT + 1 ))
         datanode[$j]=$(( $PORT + 2 ))

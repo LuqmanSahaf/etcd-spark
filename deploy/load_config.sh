@@ -14,20 +14,20 @@ cat master/config | {
 
     drivers=${master_config["drivers"]}
     workers=${master_config["workers"]}
-
-    curl -L $default_url/${master_config["name"]}/name -XPUT -d value=${master_config["name"]}
-    curl -L $default_url/${master_config["name"]}/spark_env -XPUT --data-urlencode value@master/spark-env.sh
-    curl -L $default_url/${master_config["name"]}/log4j -XPUT --data-urlencode value@log4j.properties
-    curl -L $default_url/${master_config["name"]}/drivers -XPUT -d value=$drivers
-    curl -L $default_url/${master_config["name"]}/workers -XPUT -d value=$workers
+    master=${master_config["name"]}
+    curl -L $default_url/$master/name -XPUT -d value=$master
+    curl -L $default_url/$master/spark_env -XPUT --data-urlencode value@master/spark-env.sh
+    curl -L $default_url/$master/log4j -XPUT --data-urlencode value@log4j.properties
+    curl -L $default_url/$master/drivers -XPUT -d value=$drivers
+    curl -L $default_url/$master/workers -XPUT -d value=$workers
 
     for (( i=1; i<=$drivers ; i++ ))
     do
-        curl -L $default_url/${master_config["name"]}/driver$i/spark_env -XPUT --data-urlencode value@driver$i/spark-env.sh
+        curl -L $default_url/$master/driver$i/spark_env -XPUT --data-urlencode value@driver$i/spark-env.sh
     done
 
     for (( i=1; i<=$workers ; i++ ))
     do
-        curl -L $default_url/${master_config["name"]}/worker$i/spark_env -XPUT --data-urlencode value@worker$i/spark-env.sh
+        curl -L $default_url/$master/worker$i/spark_env -XPUT --data-urlencode value@worker$i/spark-env.sh
     done
 }
