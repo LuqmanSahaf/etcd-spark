@@ -58,7 +58,7 @@ cat master/config | {
         workerUI[$j]=$PORT
         worker[$j]=$(( $PORT + 1 ))
         datanode[$j]=$(( $PORT + 2 ))
-        to_publish="${workerUI[$j]} ${worker[$j]} ${datanode[$j]} "
+        to_publish="${workerUI[$j]} ${worker[$j]} ${datanode[$j]}"
 
         for (( k=1; k<=$drivers ; k++ ))
         do
