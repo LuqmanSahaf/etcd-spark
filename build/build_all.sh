@@ -9,7 +9,7 @@ CURDIR=$(pwd)
 BASEDIR=$(cd $(dirname $0); pwd)"/.."
 dir_list=( "apache-hadoop-hdfs-precise" "spark-1.1.0" )
 
-export IMAGE_PREFIX=""
+export IMAGE_PREFIX="luckysahaf/"
 #"amplab/"
 
 # NOTE: the order matters but this is the right one

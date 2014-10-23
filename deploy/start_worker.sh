@@ -39,4 +39,4 @@ done
 env_args="-e ETCD_ADDRESS=$ETCD_IP -e ETCD_PORT=$ETCD_PORT -e HOST_ADDRESS=$private_ip -e SPARK_WORKER_UI_PORT=$worker_ui -e DATANODE_PORT=$datanode_port"
 
 # start docker container
-docker run --name $worker -h $worker $publish_args $env_args -v $worker_dir:/home/run luckysahaf/spark-worker:1.1.0 $master
+docker run --name $worker -h $worker $publish_args $env_args -v $worker_dir:/home/run spark-worker:1.1.0 $master

@@ -37,4 +37,4 @@ done
 env_args="-e ETCD_ADDRESS=$ETCD_IP -e ETCD_PORT=$ETCD_PORT -e HOST_ADDRESS=$private_ip"
 
 # start docker container
-docker run --name $driver -h $driver $publish_args $env_args -v $driver_dir:/home/run luckysahaf/spark-shell:1.1.0 $master
+docker run --name $driver -h $driver $publish_args $env_args -v $driver_dir:/home/run spark-shell:1.1.0 $master

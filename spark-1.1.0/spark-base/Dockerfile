@@ -1,7 +1,7 @@
 # Spark 1.1.0
 # Version 1.1.0
 #
-FROM luckysahaf/apache-hadoop-hdfs-precise:1.2.1
+FROM apache-hadoop-hdfs-precise:1.2.1
 
 MAINTAINER luckysahaf lgsahaf@gmail.com
 

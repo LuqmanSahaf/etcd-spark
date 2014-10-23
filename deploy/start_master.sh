@@ -20,4 +20,4 @@ publish_args="-p 8080:8080 -p $private_ip:7077:7077 -p $private_ip:9000:9000"
 env_args="-e ETCD_ADDRESS=$ETCD_IP -e ETCD_PORT=$ETCD_PORT -e HOST_ADDRESS=$private_ip"
 
 # start docker container
-docker run --name $master -h $master $publish_args $env_args -v $master_dir:/home/run luckysahaf/spark-master:1.1.0
+docker run --name $master -h $master $publish_args $env_args -v $master_dir:/home/run spark-master:1.1.0
