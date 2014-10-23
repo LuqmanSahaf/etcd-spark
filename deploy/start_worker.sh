@@ -7,12 +7,12 @@ private_ip=$3
 worker_dir=$(pwd)/run/$worker
 
 rm -r $worker_dir
-mkdir $worker_dir
+mkdir -p $worker_dir
 
 # get default configurations from etcd server
 to_publish=$(etcdctl get /etcd_spark/$master/$worker/to_publish)
 datanode_port=$(etcdctl get /etcd_spark/$master/$worker/DATANODE_PORT)
-etcdctl get /etcd_spark/$master//$worker/spark_env > $worker_dir/spark-env.sh
+etcdctl get /etcd_spark/$master/$worker/spark_env > $worker_dir/spark-env.sh
 worker_ui=$(etcdctl get /etcd_spark/$master/$worker/WORKER_UI)
 worker_port=$(etcdctl get /etcd_spark/$master/$worker/WORKER_PORT)
 etcdctl get /etcd_spark/$master/log4j > $worker_dir/log4j.properties
