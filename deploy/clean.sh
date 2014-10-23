@@ -13,8 +13,8 @@ master=$1
 # driver*/to_publish
 
 default_url=http://$ETCD_IP:$ETCD_PORT/v2/keys/etcd_spark
-drivers=$(curl -L $default_url/$master/drivers)
-workers=$(curl -L $default_url/$master/workers)
+drivers=$(etcdctl get $default_url/$master/drivers)
+workers=$(etcdctl get $default_url/$master/workers)
 
 for (( i=1 ; i<=drivers ; i++ ))
 do
@@ -33,3 +33,6 @@ do
     curl -L -X DELETE $default_url/worker$i/WORKER_UI
     curl -L -X DELETE $default_url/worker$i/WORKER_PORT
 done
+
+curl -L -X DELETE $default_url/workers
+curl -L -X DELETE $default_url/drivers
