@@ -2,39 +2,38 @@
 
 drivers=$1
 workers=$2
-master=$3
 
+cat defaults.conf | {
+    declare -A config
+    while read key value; do
+        config[$key]=$value
+    done
+    master=${config[master.name]}
+    rm -r $master
+    mkdir $master
+    cp spark-env.sh $master/
+    echo export SPARK_MASTER_MEMORY=${config[master.mem]} >> $master/spark-env.sh
 
-declare -A config
-cat defaults.conf | while read key value; do
-    config[$key]=$value
-done
+    # For master
+    echo "name ${config["master.name"]}" > $master/config
+    echo "drivers $drivers" >> $master/config
+    echo "workers $workers" >> $master/config
 
-rm -r $master
-mkdir $master
-cp spark-env.sh $master/
-echo ${config["master.mem"]}
-echo "export SPARK_MASTER_MEMORY=${config["master.mem"]}" >> $master/spark-env.sh
+    # For drivers
+    for (( i=1 ; i<=$drivers ; i++ ))
+    do
+        rm -r driver$i
+        mkdir driver$i
+        cp spark-env.sh driver$i/
+        echo export SPARK_EXECUTOR_MEMORY=${config[driver.executor_mem]} >> driver$i/spark-env.sh
+    done
 
-# For master
-echo "name ${config["master.name"]}" > $master/config
-echo "drivers $drivers" >> $master/config
-echo "workers $workers" >> $master/config
-
-# For drivers
-for (( i=1 ; i<=$drivers ; i++ ))
-do
-    rm -r driver$1
-    mkdir driver$1
-    cp spark-env.sh driver$1/
-    echo "export SPARK_EXECUTOR_MEMORY=${config["driver.executor_mem"]}" > driver$i/spark-env.sh
-done
-
-for (( i=1 ; i<=$workers ; i++ ))
-do
-    rm -r worker$1
-    mkdir worker$1
-    cp spark-env.sh worker$1/
-    echo "export SPARK_WORKER_MEMORY=${config["worker.mem"]}" >> worker$i/spark-env.sh
-    echo "export SPARK_WORKER_CORES=${config["worker.cores"]}" >> worker$i/spark-env.sh
-done
+    for (( j=1 ; j<=$workers ; j++ ))
+    do
+        rm -r worker$j
+        mkdir worker$j
+        cp spark-env.sh worker$j/
+        echo export SPARK_WORKER_MEMORY=${config[worker.mem]} >> worker$j/spark-env.sh
+        echo export SPARK_WORKER_CORES=${config[worker.cores]} >> worker$j/spark-env.sh
+    done
+}
