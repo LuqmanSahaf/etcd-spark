@@ -26,4 +26,4 @@ sleep 5
 echo "starting Spark Worker"
 cp /root/spark_worker_files/run_spark_worker.sh /
 chmod a+rx /run_spark_worker.sh
-sudo -u hdfs SPARK_WORKER_UI_PORT=$SPARK_WORKER_UI_PORT SPARK_HOME=$SPARK_HOME /run_spark_worker.sh
+sudo -u hdfs SPARK_HOME=$SPARK_HOME /run_spark_worker.sh
