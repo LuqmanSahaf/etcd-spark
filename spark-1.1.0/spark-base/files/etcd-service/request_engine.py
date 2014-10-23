@@ -49,7 +49,7 @@ class RequestEngine:
 		to_return = {}
 		request = ['curl', '-L', 'http://%s:%s/v2/keys/%s%s?recursive=true' % (self.etcd_address, self.etcd_port, self.etcd_directory, directory)]
 		# print request
-		proc = subprocess.Popen([request], stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+		proc = subprocess.Popen(request, stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 		(out, err) = proc.communicate()
 		if out == '':
 			index = err.find('curl: (')
