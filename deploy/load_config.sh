@@ -1,6 +1,6 @@
 #!/bin/sh
 
-default_url=http:$ETCD_IP:$ETCD_PORT/v2/keys/etcd_spark
+default_url=http://$ETCD_IP:$ETCD_PORT/v2/keys/etcd_spark
 
 drivers=0
 workers=0
