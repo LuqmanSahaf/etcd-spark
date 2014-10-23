@@ -46,7 +46,7 @@ cat master/config | {
 
         # Put the files in etcd server
         curl -L -XPUT "${default_url}/driver${i}/spark_defaults" --data-urlencode value@driver${i}/spark-defaults.conf
-        curl -L -XPUT "${default_url}/driver${i}/to_publish" -d value=\"${to_publish}\"
+        curl -L -XPUT "${default_url}/driver${i}/to_publish" -d value='${to_publish}'
 
         PORT=$(( $PORT +  ($i + 1) * 7 ))
     done
@@ -65,10 +65,10 @@ cat master/config | {
             to_publish="$to_publish ${executor[$k]} ${blockManager[$k]}"
         done
 
-        curl -L -XPUT "$default_url/worker$j/to_publish" --data-urlencode -d value=\"${to_publish}\"
+        curl -L -XPUT "$default_url/worker$j/to_publish" --data-urlencode -d value='${to_publish}'
         curl -L -XPUT "$default_url/worker$j/WORKER_UI" --data-urlencode -d value=${workerUI[$j]}
         curl -L -XPUT "$default_url/worker$j/WORKER_PORT" --data-urlencode -d value=${worker[$j]}
-        curl -L -XPUT "$default_url/worker$j/DATANODE_PORT" -d value=\"${datanode[$j]}\"
+        curl -L -XPUT "$default_url/worker$j/DATANODE_PORT" -d value=${datanode[$j]}
 
         PORT=$(( $PORT +  ($j + 1) * 3 ))
     done
