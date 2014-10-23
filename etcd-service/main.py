@@ -10,6 +10,7 @@ class EtcdResolver:
 		Initialize the service for naming the containers (hosts) in the cluster.
 		"""
 		self.etcd_address = etcd_address
+		self.host_address = host_address
 		self.request_engine = RequestEngine(etcd_address, etcd_port, etcd_directory, hostname)
 		self.hostname = hostname
 		self.hosts = {}
