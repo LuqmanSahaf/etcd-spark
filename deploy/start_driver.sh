@@ -10,15 +10,11 @@ rm -r $driver_dir
 mkdir -p $driver_dir
 
 # get default configurations from etcd server
-spark_defaults=$(etcdctl get /etcd_spark/$master/$driver/spark_defaults)
+etcdctl get /etcd_spark/$master/$driver/spark_defaults > $driver_dir/spark-defaults.conf
 to_publish=$(etcdctl get /etcd_spark/$master/$driver/to_publish)
-spark_env=$(etcdctl get /etcd_spark/$master/$driver/spark_env)
-log4j=$(etcdctl get /etcd_spark/$master/log4j)
+etcdctl get /etcd_spark/$master/$driver/spark_env > $driver_dir/spark-env.sh
+etcdctl get /etcd_spark/$master/log4j > $driver_dir/log4j.properties
 
-# saving into files
-echo $log4j > $driver_dir/log4j.properties
-echo $spark_env > $driver_dir/spark-env.sh
-echo $spark_defaults > $driver_dir/spark-defaults.conf
 
 # First port in to_publish is driver UI port, so it should be published to 0.0.0.0
 # Therefore $private_ip is not attached at the front. Other ports are published
