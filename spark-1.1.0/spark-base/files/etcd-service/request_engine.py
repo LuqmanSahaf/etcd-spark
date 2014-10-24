@@ -27,7 +27,7 @@ class RequestEngine:
 			return response['node']['value']
 
 	def set(self, key, value, ttl):
-		request = ['curl', '-L', '-XPUT', 'http://%s:%s/v2/keys/%s/%s' % (self.etcd_address, self.etcd_port, self.etcd_directory, key), '-d', 'value=%s' % value, '-d', 'ttl=%i' % ttl]
+		request = ['curl', '-XPUT', '-d', 'value=%s' % value, '-d', 'ttl=%i' % ttl, '-L', 'http://%s:%s/v2/keys/%s/%s' % (self.etcd_address, self.etcd_port, self.etcd_directory, key)]
 		# print request
 		proc = subprocess.Popen(request, stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 		(out, err) = proc.communicate()
