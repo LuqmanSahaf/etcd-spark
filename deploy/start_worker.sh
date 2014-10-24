@@ -18,7 +18,6 @@ worker_port=$(etcdctl get /etcd_spark/$master/$worker/WORKER_PORT)
 etcdctl get /etcd_spark/$master/log4j > $worker_dir/log4j.properties
 
 # saving into files
-echo $log4j > $worker_dir/log4j.properties
 echo "export SPARK_WORKER_PORT=$worker_port" >> $worker_dir/spark-env.sh
 
 # First port in to_publish worker UI port, so it should be published to 0.0.0.0
