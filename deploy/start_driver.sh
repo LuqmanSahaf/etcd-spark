@@ -7,7 +7,7 @@ private_ip=$3
 driver_dir=/home/$driver
 
 rm -r $driver_dir
-mkdir $driver_dir
+mkdir -p $driver_dir
 
 # get default configurations from etcd server
 spark_defaults=$(etcdctl get /etcd_spark/$master/$driver/spark_defaults)
