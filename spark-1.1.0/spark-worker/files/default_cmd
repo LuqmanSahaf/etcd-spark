@@ -12,7 +12,7 @@ echo "Java home: $JAVA_HOME"
 
 echo "starting etcd-service for name resolution"
 cd /root/spark_files/etcd-service
-python /root/spark_files/etcd-service/main.py --etcd_directory /etcd_spark/$1/name_service --etcd_port $ETCD_PORT $ETCD_ADDRESS $HOST_ADDRESS &
+python /root/spark_files/etcd-service/main.py --etcd_directory etcd_spark/$1/name_service --etcd_port $ETCD_PORT $ETCD_ADDRESS $HOST_ADDRESS &
 cd $SPARK_HOME
 
 echo "starting Hadoop Datanode"

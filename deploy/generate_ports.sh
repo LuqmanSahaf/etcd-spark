@@ -35,6 +35,7 @@ cat master/config | {
         executor[$i]=$(( $PORT + 6 ))
         echo "spark.driver.host driver$i" > driver$i/spark-defaults.conf
         echo "spark.driver.port ${driver_port[$i]}" >> driver$i/spark-defaults.conf
+        echo "spark.broadcast.port ${broadcast[$i]}" >> driver$i/spark-defaults.conf
         echo "spark.replClassServer.port  ${replClassServer[$i]}" >> driver$i/spark-defaults.conf
         echo "spark.fileserver.port  ${fileserver[$i]}" >> driver$i/spark-defaults.conf
         echo "spark.ui.port  ${driverUI[$i]}" >> driver$i/spark-defaults.conf
@@ -42,7 +43,7 @@ cat master/config | {
         echo "spark.executor.port  ${executor[$i]}" >> driver$i/spark-defaults.conf
 
         # create new file and add to to_publish ports
-        to_publish="${driverUI[$i]} ${driver_port[$i]} ${broadcast[$i]} ${replClassServer[$i]} ${fileserver[$i]}"
+        to_publish="${driverUI[$i]} ${driver_port[$i]} ${broadcast[$i]} ${replClassServer[$i]} ${fileserver[$i]} ${blockManager[$i]}"
 
         # Put the files in etcd server
         curl -L -XPUT "${default_url}/driver${i}/spark_defaults" --data-urlencode value@driver${i}/spark-defaults.conf
