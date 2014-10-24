@@ -4,7 +4,7 @@ master=$1
 driver=driver$2
 private_ip=$3
 
-driver_dir=/home/$driver
+driver_dir=$(pwd)/run/$driver
 
 rm -r $driver_dir
 mkdir -p $driver_dir
