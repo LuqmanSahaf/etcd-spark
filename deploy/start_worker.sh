@@ -27,9 +27,9 @@ count=0
 publish_args=""
 for i in ${to_publish[@]}
 do
-    if [ count == 0 ] ; then
-        count=$(( count+1 ))
-        publish_args="$publish_args -p $i:$i"
+    if [ $count == 0 ] ; then
+        count=$(( $count+1 ))
+        publish_args="-p $i:$i"
     fi
     publish_args="$publish_args -p $private_ip:$i:$i"
 done
