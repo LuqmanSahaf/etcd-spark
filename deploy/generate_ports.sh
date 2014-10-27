@@ -8,6 +8,8 @@ cat master/config | {
     master=${master_config["name"]}
     drivers=${master_config["drivers"]}
     workers=${master_config["workers"]}
+    driver_alias=${master_config["driver.alias"]}
+    worker_alias=${master_config["worker.alias"]}
 
     default_url=http://$ETCD_IP:$ETCD_PORT/v2/keys/etcd_spark/$master
 
@@ -26,6 +28,7 @@ cat master/config | {
     # driver, broadcast, replClassServer, fileserver, UI
     for (( i=1; i<=$drivers ; i++ ))
     do
+        driver=$driver_alias$i
         driverUI[$i]=$PORT
         driver_port[$i]=$(( $PORT + 1 ))
         broadcast[$i]=$(( $PORT + 2 ))
@@ -33,14 +36,14 @@ cat master/config | {
         fileserver[$i]=$(( $PORT + 4 ))
         blockManager[$i]=$(( $PORT + 5 ))
         executor[$i]=$(( $PORT + 6 ))
-        echo "spark.driver.host driver$i" > driver$i/spark-defaults.conf
-        echo "spark.driver.port ${driver_port[$i]}" >> driver$i/spark-defaults.conf
-        echo "spark.broadcast.port ${broadcast[$i]}" >> driver$i/spark-defaults.conf
-        echo "spark.replClassServer.port  ${replClassServer[$i]}" >> driver$i/spark-defaults.conf
-        echo "spark.fileserver.port  ${fileserver[$i]}" >> driver$i/spark-defaults.conf
-        echo "spark.ui.port  ${driverUI[$i]}" >> driver$i/spark-defaults.conf
-        echo "spark.blockManager.port  ${blockManager[$i]}" >> driver$i/spark-defaults.conf
-        echo "spark.executor.port  ${executor[$i]}" >> driver$i/spark-defaults.conf
+        echo "spark.driver.host $driver" > $driver/spark-defaults.conf
+        echo "spark.driver.port ${driver_port[$i]}" >> $driver/spark-defaults.conf
+        echo "spark.broadcast.port ${broadcast[$i]}" >> $driver/spark-defaults.conf
+        echo "spark.replClassServer.port  ${replClassServer[$i]}" >> $driver/spark-defaults.conf
+        echo "spark.fileserver.port  ${fileserver[$i]}" >> $driver/spark-defaults.conf
+        echo "spark.ui.port  ${driverUI[$i]}" >> $driver/spark-defaults.conf
+        echo "spark.blockManager.port  ${blockManager[$i]}" >> $driver/spark-defaults.conf
+        echo "spark.executor.port  ${executor[$i]}" >> $driver/spark-defaults.conf
 
         # create new file and add to to_publish ports
         to_publish="${driverUI[$i]} ${driver_port[$i]} ${broadcast[$i]} ${replClassServer[$i]} ${fileserver[$i]} ${blockManager[$i]}"
@@ -56,20 +59,21 @@ cat master/config | {
     # worker, blockManager, executor, datanode (hadoop) ,UI
     for (( j=1; j<=$workers ; j++ ))
     do
+        worker=$worker_alias$j
         workerUI[$j]=$PORT
-        worker[$j]=$(( $PORT + 1 ))
+        workerport[$j]=$(( $PORT + 1 ))
         datanode[$j]=$(( $PORT + 2 ))
-        to_publish="${workerUI[$j]} ${worker[$j]} ${datanode[$j]}"
+        to_publish="${workerUI[$j]} ${workerport[$j]} ${datanode[$j]}"
 
         for (( k=1; k<=$drivers ; k++ ))
         do
             to_publish="$to_publish ${executor[$k]} ${blockManager[$k]}"
         done
 
-        curl -L -XPUT "$default_url/worker$j/to_publish" -d value="$to_publish"
-        curl -L -XPUT "$default_url/worker$j/WORKER_UI" -d value=${workerUI[$j]}
-        curl -L -XPUT "$default_url/worker$j/WORKER_PORT" -d value=${worker[$j]}
-        curl -L -XPUT "$default_url/worker$j/DATANODE_PORT" -d value=${datanode[$j]}
+        curl -L -XPUT "$default_url/$worker/to_publish" -d value="$to_publish"
+        curl -L -XPUT "$default_url/$worker/WORKER_UI" -d value=${workerUI[$j]}
+        curl -L -XPUT "$default_url/$worker/WORKER_PORT" -d value=${workerport[$j]}
+        curl -L -XPUT "$default_url/$worker/DATANODE_PORT" -d value=${datanode[$j]}
 
         PORT=$(( $PORT +  ($j + 1) * 3 ))
     done

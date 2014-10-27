@@ -1,7 +1,7 @@
 #!/bin/sh
 
 master=$1
-driver=driver$2
+driver=$2
 private_ip=$3
 
 driver_dir=$(pwd)/run/$driver

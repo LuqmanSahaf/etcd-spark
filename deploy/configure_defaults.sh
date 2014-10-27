@@ -1,39 +1,53 @@
 #/bin/sh
 
-drivers=$1
-workers=$2
-
 cat defaults.conf | {
     declare -A config
     while read key value; do
         config[$key]=$value
     done
-    master=${config[master.name]}
+    master_suffix=${config[master.suffix]}
+    master=${config[master.alias]}$master_suffix
+    drivers=${config[drivers]}
+    workers=${config[workers]}
     rm -r $master
     mkdir $master
     cp spark-env.sh $master/
     echo export SPARK_MASTER_MEMORY=${config[master.mem]} >> $master/spark-env.sh
+    driver_alias=${config[driver.alias]}
+    worker_alias=${config[driver.alias]}
 
     # For master
-    echo "name ${config["master.name"]}" > $master/config
+    echo "name $master" > $master/config
     echo "drivers $drivers" >> $master/config
     echo "workers $workers" >> $master/config
+    echo "driver.alias $driver_alias$master_suffix" >> $master/config
+    echo "worker.alias $worker_alias$master_suffix" >> $master/config
+
+    curl -L $default_url/$master/name -XPUT -d value=$master
+    curl -L $default_url/$master/spark_env -XPUT --data-urlencode value@master/spark-env.sh
+    curl -L $default_url/$master/log4j -XPUT --data-urlencode value@log4j.properties
+    curl -L $default_url/$master/drivers -XPUT -d value=$drivers
+    curl -L $default_url/$master/workers -XPUT -d value=$workers
 
     # For drivers
     for (( i=1 ; i<=$drivers ; i++ ))
     do
-        rm -r driver$i
-        mkdir driver$i
-        cp spark-env.sh driver$i/
-        echo export SPARK_EXECUTOR_MEMORY=${config[driver.executor_mem]} >> driver$i/spark-env.sh
+        driver=$driver_alias$master_suffix_$i
+        rm -r $driver
+        mkdir $driver
+        cp spark-env.sh $driver/
+        echo export SPARK_EXECUTOR_MEMORY=${config[driver.executor_mem]} >> $driver/spark-env.sh
+        curl -L $default_url/$master/driver$i/spark_env -XPUT --data-urlencode value@driver$i/spark-env.sh
     done
 
     for (( j=1 ; j<=$workers ; j++ ))
     do
-        rm -r worker$j
-        mkdir worker$j
-        cp spark-env.sh worker$j/
-        echo export SPARK_WORKER_MEMORY=${config[worker.mem]} >> worker$j/spark-env.sh
-        echo export SPARK_WORKER_CORES=${config[worker.cores]} >> worker$j/spark-env.sh
+        worker=$worker_alias$master_suffix_$j
+        rm -r $worker
+        mkdir $worker
+        cp spark-env.sh $worker/
+        echo export SPARK_WORKER_MEMORY=${config[worker.mem]} >> $worker/spark-env.sh
+        echo export SPARK_WORKER_CORES=${config[worker.cores]} >> $worker/spark-env.sh
+        curl -L $default_url/$master/worker$i/spark_env -XPUT --data-urlencode value@worker$i/spark-env.sh
     done
 }
