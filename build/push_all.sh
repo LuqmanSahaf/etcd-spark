@@ -5,7 +5,7 @@ if [[ "$USER" != "root" ]]; then
     exit 1
 fi
 
-image_list=( "apache-hadoop-hdfs-precise" "spark-master" "spark-worker" "spark-shell" )
+image_list=( "apache-hadoop-hdfs-precise" "spark-master" "spark-worker" "spark-shell" "spark-submit" )
 
 IMAGE_PREFIX="luckysahaf/"
 

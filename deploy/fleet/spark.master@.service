@@ -1,0 +1,24 @@
+[Unit]
+Description=Spark Master
+After=docker.service
+Requires=docker.service
+After=etcd.service
+Requires=etcd.service
+
+[Service]
+TimeoutStartSec=0
+ExecStartPre=-/usr/bin/docker kill spark_master%i
+ExecStartPre=-/usr/bin/docker rm spark_master%i
+ExecStartPre=/usr/bin/docker pull luckysahaf/spark-master:1.1.0
+EnvironmentFile=/etc/environment
+ExecStart=/usr/bin/bash -c '\
+sudo chmod +x /etc/environment \
+. /etc/environment \
+master_dir=/home/core/run/spark_master%i \
+mkdir -p $master_dir \
+etcdctl get /etcd_spark/$master/spark_env > $master_dir/spark-env.sh \
+etcdctl get /etcd_spark/$master/log4j > $master_dir/log4j.properties \
+publish_args="-p 8080:8080 -p ${COREOS_PRIVATE_IPV4}:7077:7077 -p ${COREOS_PRIVATE_IPV4}:9000:9000" \
+env_args="-e ETCD_ADDRESS=${COREOS_PRIVATE_IPV4} -e ETCD_PORT=$ETCD_PORT -e HOST_ADDRESS=${COREOS_PRIVATE_IPV4}" \
+docker run --name spark_master%i -h spark_master%i $publish_args $env_args -v $master_dir:/home/run spark-master:1.1.0 '
+ExecStop=/usr/bin/docker stop spark_master%i

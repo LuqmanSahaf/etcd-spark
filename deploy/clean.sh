@@ -2,16 +2,6 @@
 
 master=$1
 
-# Keys to remove from etcd:
-# master/name
-# worker*/spark_env
-# worker*/WORKER_UI
-# worker*/WORKER_PORT
-# worker*/to_publish
-# driver*/spark_defaults
-# driver*/spark_env
-# driver*/to_publish
-
 default_url=http://$ETCD_IP:$ETCD_PORT/v2/keys/etcd_spark/$master
 drivers=$(etcdctl get etcd_spark/$master/drivers)
 workers=$(etcdctl get etcd_spark/$master/workers)

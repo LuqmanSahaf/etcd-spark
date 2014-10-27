@@ -5,7 +5,7 @@ if [[ "$USER" != "root" ]]; then
     exit 1
 fi
 
-image_list=("spark-master:1.1.0" "spark-worker:1.1.0" "spark-shell:1.1.0" )
+image_list=("spark-master:1.1.0" "spark-worker:1.1.0" "spark-shell:1.1.0" "spark-submit:1.1.0" )
 
 IMAGE_PREFIX="luckysahaf/"
 

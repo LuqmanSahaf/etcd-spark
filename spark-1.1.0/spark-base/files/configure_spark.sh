@@ -20,9 +20,9 @@ function create_spark_directories() {
 
 function deploy_spark_files() {
     deploy_hadoop_files
-    cp /home/run/* /opt/spark-$SPARK_VERSION/conf/
-    # cp /home/run/log4j.properties /opt/spark-$SPARK_VERSION/conf/
-    # cp /home/run/spark-defaults.conf /opt/spark-$SPARK_VERSION/conf/
+    cp /home/run/spark-env.sh /opt/spark-$SPARK_VERSION/conf/
+    cp /home/run/log4j.properties /opt/spark-$SPARK_VERSION/conf/
+    cp /home/run/spark-defaults.conf /opt/spark-$SPARK_VERSION/conf/
 }
 
 function configure_spark() {

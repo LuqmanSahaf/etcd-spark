@@ -13,6 +13,7 @@ mkdir -p $driver_dir
 etcdctl get /etcd_spark/$master/$driver/spark_defaults > $driver_dir/spark-defaults.conf
 to_publish=$(etcdctl get /etcd_spark/$master/$driver/to_publish)
 etcdctl get /etcd_spark/$master/$driver/spark_env > $driver_dir/spark-env.sh
+echo "export SPARK_LOCAL_IP=$private_ip" >> $driver_dir/spark-env.sh
 etcdctl get /etcd_spark/$master/log4j > $driver_dir/log4j.properties
 
 
