@@ -49,8 +49,8 @@ cat $master/config | {
         to_publish="${driverUI[$i]} ${driver_port[$i]} ${broadcast[$i]} ${replClassServer[$i]} ${fileserver[$i]} ${blockManager[$i]}"
 
         # Put the files in etcd server
-        curl -L -XPUT "${default_url}/driver${i}/spark_defaults" --data-urlencode value@driver${i}/spark-defaults.conf
-        curl -L -XPUT "${default_url}/driver${i}/to_publish" -d value="$to_publish"
+        curl -L -XPUT "${default_url}/$driver/spark_defaults" --data-urlencode value@driver${i}/spark-defaults.conf
+        curl -L -XPUT "${default_url}/$driver/to_publish" -d value="$to_publish"
 
         PORT=$(( $PORT +  ($i + 1) * 7 ))
     done
