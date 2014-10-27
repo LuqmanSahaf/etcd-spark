@@ -22,7 +22,7 @@ cat defaults.conf | {
     echo "workers $workers" >> $master/config
     echo "driver.alias $driver_alias$master_suffix" >> $master/config
     echo "worker.alias $worker_alias$master_suffix" >> $master/config
-    default_url=http://$ETCD_IP:$ETCD_PORT/etcd_spark/$master
+    default_url=http://$ETCD_IP:$ETCD_PORT/v2/keys/etcd_spark/$master
 
     curl -L $default_url/name -XPUT -d value=$master
     curl -L $default_url/spark_env -XPUT --data-urlencode value@master/spark-env.sh
