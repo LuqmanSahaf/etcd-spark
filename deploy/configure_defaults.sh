@@ -22,6 +22,8 @@ cat defaults.conf | {
     echo "workers $workers" >> $master/config
     echo "driver.alias $driver_alias$master_suffix" >> $master/config
     echo "worker.alias $worker_alias$master_suffix" >> $master/config
+    echo "master.suffix $master_suffix" >> $master/config
+
     default_url=http://$ETCD_IP:$ETCD_PORT/v2/keys/etcd_spark/$master
 
     curl -L $default_url/name -XPUT -d value=$master
@@ -33,7 +35,7 @@ cat defaults.conf | {
     # For drivers
     for (( i=1 ; i<=$drivers ; i++ ))
     do
-        driver=$driver_alias$master_suffix_$i
+        driver=$driver_alias${master_suffix}_$i
         rm -r $driver
         mkdir $driver
         cp spark-env.sh $driver/
@@ -43,7 +45,7 @@ cat defaults.conf | {
 
     for (( j=1 ; j<=$workers ; j++ ))
     do
-        worker=$worker_alias$master_suffix_$j
+        worker=$worker_alias${master_suffix}_$j
         rm -r $worker
         mkdir $worker
         cp spark-env.sh $worker/
