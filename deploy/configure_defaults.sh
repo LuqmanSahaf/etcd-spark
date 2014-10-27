@@ -22,12 +22,13 @@ cat defaults.conf | {
     echo "workers $workers" >> $master/config
     echo "driver.alias $driver_alias$master_suffix" >> $master/config
     echo "worker.alias $worker_alias$master_suffix" >> $master/config
+    default_url=http://$ETCD_IP:$ETCD_PORT/etcd_spark/$master
 
-    curl -L $default_url/$master/name -XPUT -d value=$master
-    curl -L $default_url/$master/spark_env -XPUT --data-urlencode value@master/spark-env.sh
-    curl -L $default_url/$master/log4j -XPUT --data-urlencode value@log4j.properties
-    curl -L $default_url/$master/drivers -XPUT -d value=$drivers
-    curl -L $default_url/$master/workers -XPUT -d value=$workers
+    curl -L $default_url/name -XPUT -d value=$master
+    curl -L $default_url/spark_env -XPUT --data-urlencode value@master/spark-env.sh
+    curl -L $default_url/log4j -XPUT --data-urlencode value@log4j.properties
+    curl -L $default_url/drivers -XPUT -d value=$drivers
+    curl -L $default_url/workers -XPUT -d value=$workers
 
     # For drivers
     for (( i=1 ; i<=$drivers ; i++ ))
@@ -37,7 +38,7 @@ cat defaults.conf | {
         mkdir $driver
         cp spark-env.sh $driver/
         echo export SPARK_EXECUTOR_MEMORY=${config[driver.executor_mem]} >> $driver/spark-env.sh
-        curl -L $default_url/$master/driver$i/spark_env -XPUT --data-urlencode value@driver$i/spark-env.sh
+        curl -L $default_url/driver$i/spark_env -XPUT --data-urlencode value@driver$i/spark-env.sh
     done
 
     for (( j=1 ; j<=$workers ; j++ ))
@@ -48,6 +49,6 @@ cat defaults.conf | {
         cp spark-env.sh $worker/
         echo export SPARK_WORKER_MEMORY=${config[worker.mem]} >> $worker/spark-env.sh
         echo export SPARK_WORKER_CORES=${config[worker.cores]} >> $worker/spark-env.sh
-        curl -L $default_url/$master/worker$i/spark_env -XPUT --data-urlencode value@worker$i/spark-env.sh
+        curl -L $default_url/worker$i/spark_env -XPUT --data-urlencode value@worker$i/spark-env.sh
     done
 }
