@@ -4,7 +4,7 @@ Description=Spark Submit
 [Service]
 TimeoutStartSec=0
 ExecStartPre=-/usr/bin/docker kill spark_submit%i
-ExecStartPre=-/usr/bin/docker rm spark_worker%i
+ExecStartPre=-/usr/bin/docker rm spark_submit%i
 ExecStartPre=/usr/bin/docker pull luckysahaf/spark-submit:1.1.0
 EnvironmentFile=/etc/environment
 ExecStart=/usr/bin/bash -c '\
@@ -46,3 +46,6 @@ env_args="-e ETCD_ADDRESS=${COREOS_PRIVATE_IPV4} -e ETCD_PORT=$ETCD_PORT -e HOST
 SPARK_SUBMIT_OPTS=$(etcdctl get /etcd_spark/$master/$driver/spark_submit_opts) \
 docker run --name $driver -h $driver $publish_args $env_args -v $driver_dir:/home/run luckysahaf/spark-submit:1.1.0 $master $SPARK_SUBMIT_OPTS'
 ExecStop=/usr/bin/docker stop spark_driver%i
+
+[X-Fleet]
+Conflicts=spark.worker@*.service
