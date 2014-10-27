@@ -27,8 +27,9 @@ do
     if [ $count == 0 ] ; then
         count=$(( $count+1 ))
         publish_args="-p $i:$i"
+    else
+        publish_args="$publish_args -p $private_ip:$i:$i"
     fi
-    publish_args="$publish_args -p $private_ip:$i:$i"
 done
 
 env_args="-e ETCD_ADDRESS=$ETCD_IP -e ETCD_PORT=$ETCD_PORT -e HOST_ADDRESS=$private_ip"
