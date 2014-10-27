@@ -1,11 +1,11 @@
 #!/bin/bash
 
+master=$1
 declare -A master_config
-cat master/config | {
+cat $master/config | {
     while read key value; do
         master_config[$key]=$value
     done
-    master=${master_config["name"]}
     drivers=${master_config["drivers"]}
     workers=${master_config["workers"]}
     driver_alias=${master_config["driver.alias"]}
