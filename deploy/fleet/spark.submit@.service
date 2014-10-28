@@ -14,7 +14,7 @@ IFS="_" ;\
 instance=%i ;\
 declare -A toks ;\
 count=0 ;\
-for n in $instance ; do ;\
+for n in $instance ; do \
     toks[${count}]=$n ;\
 done ;\
 master=spark_master${toks[0]} ;\
@@ -35,12 +35,13 @@ done ;\
 count=0 ;\
 publish_args="" ;\
 for i in ${to_publish[@]} ;\
-do ;\
-    if [ $count == 0 ] ; then ;\
+do \
+    if [ $count == 0 ] ; then \
         count=$(( $count+1 )) ;\
         publish_args="-p $i:$i" ;\
+    else \
+        publish_args="$publish_args -p ${COREOS_PRIVATE_IPV4}:$i:$i" ;\
     fi ;\
-    publish_args="$publish_args -p ${COREOS_PRIVATE_IPV4}:$i:$i" ;\
 done ;\
 env_args="-e ETCD_ADDRESS=${COREOS_PRIVATE_IPV4} -e ETCD_PORT=4001 -e HOST_ADDRESS=${COREOS_PRIVATE_IPV4}" ;\
 SPARK_SUBMIT_OPTS=$(etcdctl get /etcd_spark/$master/$driver/spark_submit_opts) ;\
