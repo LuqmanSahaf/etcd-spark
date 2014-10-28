@@ -51,6 +51,6 @@ cat defaults.conf | {
         cp spark-env.sh $worker/
         echo export SPARK_WORKER_MEMORY=${config[worker.mem]} >> $worker/spark-env.sh
         echo export SPARK_WORKER_CORES=${config[worker.cores]} >> $worker/spark-env.sh
-        curl -L $default_url/worker$i/spark_env -XPUT --data-urlencode value@worker$i/spark-env.sh
+        curl -L $default_url/worker$i/spark_env -XPUT --data-urlencode value@$worker/spark-env.sh
     done
 }
