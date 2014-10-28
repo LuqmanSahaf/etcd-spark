@@ -24,16 +24,16 @@ worker_ui=$(etcdctl get /etcd_spark/$master/$worker/WORKER_UI) ;\
 worker_port=$(etcdctl get /etcd_spark/$master/$worker/WORKER_PORT) ;\
 etcdctl get /etcd_spark/$master/log4j > $worker_dir/log4j.properties ;\
 echo "export SPARK_WORKER_PORT=$worker_port" >> $worker_dir/spark-env.sh ;\
-count=0 ;\
-publish_args="" ;\
-for i in ${to_publish[@]} ; do \
-    if [ $count == 0 ] ; then \
-        count=$(( $count+1 )) ;\
-        publish_args="-p $i:$i" ;\
-    else \
-        publish_args="$publish_args -p ${COREOS_PRIVATE_IPV4}:$i:$i" ;\
-    fi ;\
-done ;\
+publish_args=$( echo ${COREOS_PRIVATE_IPV4} $to_publish | awk \'{\
+    split($0,arr," ");
+    for ( i=2; i <= NF; i++ ) {\
+        if ( i == 2 ) { \
+            printf "%d:%d " , arr[i],arr[i];\
+        } else { \
+            printf "%s:%d:%d " , arr[1],arr[i],arr[i];\
+        } \
+    }\
+}\' )
 env_args="-e ETCD_ADDRESS=${COREOS_PRIVATE_IPV4} -e ETCD_PORT=4001 -e HOST_ADDRESS=${COREOS_PRIVATE_IPV4} -e SPARK_WORKER_UI_PORT=$worker_ui -e DATANODE_PORT=$datanode_port" ;\
 docker run --name $worker -h $worker $publish_args $env_args -v $worker_dir:/home/run luckysahaf/spark-worker:1.1.0 $master'
 ExecStop=/usr/bin/docker stop spark_worker%i
