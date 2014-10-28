@@ -14,7 +14,7 @@ cat defaults.conf | {
     cp spark-env.sh $master/
     echo export SPARK_MASTER_MEMORY=${config[master.mem]} >> $master/spark-env.sh
     driver_alias=${config[driver.alias]}
-    worker_alias=${config[driver.alias]}
+    worker_alias=${config[worker.alias]}
 
     # For master
     echo "name $master" > $master/config
