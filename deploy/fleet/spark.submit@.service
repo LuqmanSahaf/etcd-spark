@@ -10,17 +10,9 @@ EnvironmentFile=/etc/environment
 ExecStart=/usr/bin/bash -c '\
 sudo chmod +x /etc/environment ;\
 . /etc/environment ;\
-IFS="_" ;\
-instance=%i ;\
-declare -A toks ;\
-count=0 ;\
-for n in $instance ; do \
-    toks[$count]=$n ;\
-    count=$(( $count+1 )) ;\
-done ;\
-master=spark_master${toks[0]} ;\
-driver=spark_driver%i ;\
-IFS=' ' ;\
+alias=$(echo %i | awk -F "_" {\'print$1\'}) ;\
+master=spark_master$alias
+driver=spark_driver%i
 driver_dir=/home/core/run/$driver ;\
 rm -r $driver_dir ;\
 mkdir -p $driver_dir ;\
