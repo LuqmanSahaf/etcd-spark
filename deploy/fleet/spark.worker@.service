@@ -16,7 +16,8 @@ instance=%i ;\
 declare -A toks ;\
 count=0 ;\
 for n in $instance ; do \
-    toks[${count}]=$n ;\
+    toks[$count]=$n ;\
+    count=$(( $count+1 )) ;\
 done ;\
 master=spark_master${toks[0]} ;\
 IFS=" " ;\
