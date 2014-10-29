@@ -15,7 +15,7 @@ ExecStart=/usr/bin/bash -c '\
         fleetctl start spark.worker@%i-$j ;\
     done ;\
     echo started spark-cluster-%i ;\
-    while True ; do \
+    while true ; do \
         sleep 3600 ;\
     done'
 ExecStop=/usr/bin/bash -c '\
