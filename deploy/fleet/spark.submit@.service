@@ -8,8 +8,8 @@ ExecStartPre=-/usr/bin/docker rm spark-submit%i
 ExecStartPre=/usr/bin/docker pull luckysahaf/spark-submit:1.1.0
 EnvironmentFile=/etc/environment
 ExecStart=/usr/bin/bash -c '\
-sudo chmod +x /etc/environment ;\
-. /etc/environment ;\
+    sudo chmod +x /etc/environment ;\
+    . /etc/environment ;\
     alias=$(echo %i | awk -F "-" {\'print$1\'}) ;\
     master=spark-master$alias ;\
     driver=spark-driver%i ;\
@@ -22,7 +22,7 @@ sudo chmod +x /etc/environment ;\
     echo "export SPARK_LOCAL_IP=${COREOS_PRIVATE_IPV4}" >> $driver_dir/spark-env.sh ;\
     etcdctl get /etcd_spark/$master/log4j > $driver_dir/log4j.properties ;\
     to_copy=$(etcdctl get /etcd_spark/$master/spark_driver%i/to_copy) ;\
-    for file_name in to_copy; do ;\
+    for file_name in to_copy; do \
         etcdctl get /etcd_spark/$master/$driver/file_name > $driver_dir/file_name ;\
     done ;\
     publish_args=$( echo ${COREOS_PRIVATE_IPV4} $to_publish | awk \'{\
