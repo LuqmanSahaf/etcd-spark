@@ -8,7 +8,7 @@ Requires=etcd.service
 [Service]
 TimeoutStartSec=0
 ExecStart=/usr/bin/bash -c '\
-    fleetctl start spark.master@%i.service
+    fleetctl start spark.master@%i.service ;\
     sleep 6 ;\
     workers=$(etcdctl get /etcd_spark/spark-master%i/workers) ;\
     for (( j=1 ; j<=$workers ; j++ )) ; do \
