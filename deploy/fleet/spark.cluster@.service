@@ -13,6 +13,10 @@ ExecStart=/usr/bin/bash -c '\
     workers=$(etcdctl get /etcd_spark/spark-master%i/workers) ;\
     for (( j=1 ; j<=$workers ; j++ )) ; do \
         fleetctl start spark.worker@%i-$j ;\
+    done ;\
+    echo started spark-cluster-%i ;\
+    while True ; do \
+        sleep 3600 ;\
     done'
 ExecStop=/usr/bin/bash -c '\
     workers=$(etcdctl get /etcd_spark/spark-master%i/workers) ;\
