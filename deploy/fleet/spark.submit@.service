@@ -10,31 +10,31 @@ EnvironmentFile=/etc/environment
 ExecStart=/usr/bin/bash -c '\
 sudo chmod +x /etc/environment ;\
 . /etc/environment ;\
-alias=$(echo %i | awk -F "-" {\'print$1\'}) ;\
-master=spark-master$alias
-driver=spark-driver%i
-driver_dir=/home/core/run/$driver ;\
-rm -r $driver_dir ;\
-mkdir -p $driver_dir ;\
-etcdctl get /etcd_spark/$master/$driver/spark_defaults > $driver_dir/spark-defaults.conf ;\
-to_publish=$(etcdctl get /etcd_spark/$master/$driver/to_publish) ;\
-etcdctl get /etcd_spark/$master/$driver/spark_env > $driver_dir/spark-env.sh ;\
-echo "export SPARK_LOCAL_IP=${COREOS_PRIVATE_IPV4}" >> $driver_dir/spark-env.sh ;\
-etcdctl get /etcd_spark/$master/log4j > $driver_dir/log4j.properties ;\
-to_copy=$(etcdctl get /etcd_spark/$master/spark_driver%i/to_copy) ;\
-for file_name in to_copy; do ;\
-    etcdctl get /etcd_spark/$master/$driver/file_name > $driver_dir/file_name ;\
-done ;\
-publish_args=$( echo ${COREOS_PRIVATE_IPV4} $to_publish | awk \'{\
-    split($0,arr," ");
-    for ( i=2; i <= NF; i++ ) {\
-        if ( i == 2 ) { \
-            print "-p " arr[i] ":" arr[i];\
-        } else { \
-            print "-p " arr[1] ":" arr[i] ":" arr[i];\
-        } \
-    }\
-}\' ) ;\
+    alias=$(echo %i | awk -F "-" {\'print$1\'}) ;\
+    master=spark-master$alias
+    driver=spark-driver%i
+    driver_dir=/home/core/run/$driver ;\
+    rm -r $driver_dir ;\
+    mkdir -p $driver_dir ;\
+    etcdctl get /etcd_spark/$master/$driver/spark_defaults > $driver_dir/spark-defaults.conf ;\
+    to_publish=$(etcdctl get /etcd_spark/$master/$driver/to_publish) ;\
+    etcdctl get /etcd_spark/$master/$driver/spark_env > $driver_dir/spark-env.sh ;\
+    echo "export SPARK_LOCAL_IP=${COREOS_PRIVATE_IPV4}" >> $driver_dir/spark-env.sh ;\
+    etcdctl get /etcd_spark/$master/log4j > $driver_dir/log4j.properties ;\
+    to_copy=$(etcdctl get /etcd_spark/$master/spark_driver%i/to_copy) ;\
+    for file_name in to_copy; do ;\
+        etcdctl get /etcd_spark/$master/$driver/file_name > $driver_dir/file_name ;\
+    done ;\
+    publish_args=$( echo ${COREOS_PRIVATE_IPV4} $to_publish | awk \'{\
+        split($0,arr," ");
+        for ( i=2; i <= NF; i++ ) {\
+            if ( i == 2 ) { \
+                print "-p " arr[i] ":" arr[i];\
+            } else { \
+                print "-p " arr[1] ":" arr[i] ":" arr[i];\
+            } \
+        }\
+    }\' ) ;\
 env_args="-e ETCD_ADDRESS=${COREOS_PRIVATE_IPV4} -e ETCD_PORT=4001 -e HOST_ADDRESS=${COREOS_PRIVATE_IPV4}" ;\
 SPARK_SUBMIT_OPTS=$(etcdctl get /etcd_spark/$master/$driver/spark_submit_opts) ;\
 docker run --name $driver -h $driver $publish_args $env_args -v $driver_dir:/home/run luckysahaf/spark-submit:1.1.0 $master $SPARK_SUBMIT_OPTS'
