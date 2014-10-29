@@ -21,7 +21,7 @@ ExecStart=/usr/bin/bash -c '\
     etcdctl get /etcd_spark/$master/$driver/spark_env > $driver_dir/spark-env.sh ;\
     echo "export SPARK_LOCAL_IP=${COREOS_PRIVATE_IPV4}" >> $driver_dir/spark-env.sh ;\
     etcdctl get /etcd_spark/$master/log4j > $driver_dir/log4j.properties ;\
-    to_copy=$(etcdctl get /etcd_spark/$master/spark_driver%i/to_copy) ;\
+    to_copy=$(etcdctl get /etcd_spark/$master/$driver/to_copy) ;\
     for file_name in to_copy; do \
         etcdctl get /etcd_spark/$master/$driver/file_name > $driver_dir/file_name ;\
     done ;\
@@ -37,8 +37,9 @@ ExecStart=/usr/bin/bash -c '\
     }\' ) ;\
 env_args="-e ETCD_ADDRESS=${COREOS_PRIVATE_IPV4} -e ETCD_PORT=4001 -e HOST_ADDRESS=${COREOS_PRIVATE_IPV4}" ;\
 SPARK_SUBMIT_OPTS=$(etcdctl get /etcd_spark/$master/$driver/spark_submit_opts) ;\
+echo docker run --name $driver -h $driver $publish_args $env_args -v $driver_dir:/home/run luckysahaf/spark-submit:1.1.0 $master $SPARK_SUBMIT_OPTS ;\
 docker run --name $driver -h $driver $publish_args $env_args -v $driver_dir:/home/run luckysahaf/spark-submit:1.1.0 $master $SPARK_SUBMIT_OPTS'
-ExecStop=/usr/bin/docker stop spark_driver%i
+ExecStop=/usr/bin/docker stop spark-driver%i
 
 [X-Fleet]
 Conflicts=spark.worker@*.service
