@@ -3,16 +3,16 @@ Description=Spark Submit
 
 [Service]
 TimeoutStartSec=0
-ExecStartPre=-/usr/bin/docker kill spark_submit%i
-ExecStartPre=-/usr/bin/docker rm spark_submit%i
+ExecStartPre=-/usr/bin/docker kill spark-submit%i
+ExecStartPre=-/usr/bin/docker rm spark-submit%i
 ExecStartPre=/usr/bin/docker pull luckysahaf/spark-submit:1.1.0
 EnvironmentFile=/etc/environment
 ExecStart=/usr/bin/bash -c '\
 sudo chmod +x /etc/environment ;\
 . /etc/environment ;\
-alias=$(echo %i | awk -F "_" {\'print$1\'}) ;\
-master=spark_master$alias
-driver=spark_driver%i
+alias=$(echo %i | awk -F "-" {\'print$1\'}) ;\
+master=spark-master$alias
+driver=spark-driver%i
 driver_dir=/home/core/run/$driver ;\
 rm -r $driver_dir ;\
 mkdir -p $driver_dir ;\
@@ -29,12 +29,12 @@ publish_args=$( echo ${COREOS_PRIVATE_IPV4} $to_publish | awk \'{\
     split($0,arr," ");
     for ( i=2; i <= NF; i++ ) {\
         if ( i == 2 ) { \
-            printf "%d:%d " , arr[i],arr[i];\
+            print "-p " arr[i] ":" arr[i];\
         } else { \
-            printf "%s:%d:%d " , arr[1],arr[i],arr[i];\
+            print "-p " arr[1] ":" arr[i] ":" arr[i];\
         } \
     }\
-}\' )
+}\' ) ;\
 env_args="-e ETCD_ADDRESS=${COREOS_PRIVATE_IPV4} -e ETCD_PORT=4001 -e HOST_ADDRESS=${COREOS_PRIVATE_IPV4}" ;\
 SPARK_SUBMIT_OPTS=$(etcdctl get /etcd_spark/$master/$driver/spark_submit_opts) ;\
 docker run --name $driver -h $driver $publish_args $env_args -v $driver_dir:/home/run luckysahaf/spark-submit:1.1.0 $master $SPARK_SUBMIT_OPTS'

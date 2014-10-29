@@ -31,21 +31,23 @@ cat defaults.conf | {
     curl -L $default_url/log4j -XPUT --data-urlencode value@log4j.properties
     curl -L $default_url/drivers -XPUT -d value=$drivers
     curl -L $default_url/workers -XPUT -d value=$workers
+    curl -L $default_url/driver_alias -XPUT -d value=$driver_alias
+    curl -L $default_url/worker_alias -XPUT -d value=$worker_alias
 
     # For drivers
     for (( i=1 ; i<=$drivers ; i++ ))
     do
-        driver=$driver_alias${master_suffix}_$i
+        driver="$driver_alias${master_suffix}-$i"
         rm -r $driver
         mkdir $driver
         cp spark-env.sh $driver/
         echo export SPARK_EXECUTOR_MEMORY=${config[driver.executor_mem]} >> $driver/spark-env.sh
-        curl -L $default_url/driver$i/spark_env -XPUT --data-urlencode value@driver$i/spark-env.sh
+        curl -L $default_url/driver$i/spark_env -XPUT --data-urlencode value@$driver/spark-env.sh
     done
 
     for (( j=1 ; j<=$workers ; j++ ))
     do
-        worker=$worker_alias${master_suffix}_$j
+        worker="$worker_alias${master_suffix}-$j"
         rm -r $worker
         mkdir $worker
         cp spark-env.sh $worker/

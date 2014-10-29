@@ -23,13 +23,13 @@ cat master/config | {
 
     for (( i=1; i<=$drivers ; i++ ))
     do
-        driver=$driver_alias$i
+        driver="$driver_alias-$i"
         curl -L $default_url/$master/$driver/spark_env -XPUT --data-urlencode value@driver$i/spark-env.sh
     done
 
     for (( i=1; i<=$workers ; i++ ))
     do
-        worker=$driver_suffix$i
+        worker="$worker_alias-$i"
         curl -L $default_url/$master/$worker/spark_env -XPUT --data-urlencode value@worker$i/spark-env.sh
     done
 }

@@ -28,7 +28,7 @@ cat $master/config | {
     # driver, broadcast, replClassServer, fileserver, UI
     for (( i=1; i<=$drivers ; i++ ))
     do
-        driver=${driver_alias}_$i
+        driver="${driver_alias}-$i"
         driverUI[$i]=$PORT
         driver_port[$i]=$(( $PORT + 1 ))
         broadcast[$i]=$(( $PORT + 2 ))
@@ -59,7 +59,7 @@ cat $master/config | {
     # worker, blockManager, executor, datanode (hadoop) ,UI
     for (( j=1; j<=$workers ; j++ ))
     do
-        worker=${worker_alias}_$j
+        worker="${worker_alias}-$j"
         workerUI[$j]=$PORT
         workerport[$j]=$(( $PORT + 1 ))
         datanode[$j]=$(( $PORT + 2 ))
