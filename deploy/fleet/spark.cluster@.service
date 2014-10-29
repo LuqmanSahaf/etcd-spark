@@ -1,0 +1,22 @@
+[Unit]
+Description=Spark Cluster
+After=docker.service
+Requires=docker.service
+After=etcd.service
+Requires=etcd.service
+
+[Service]
+TimeoutStartSec=0
+ExecStart=/usr/bin/bash -c '\
+    fleetctl start spark.master@%i.service
+    sleep 6 ;\
+    workers=$(etcdctl get /etcd_spark/spark-master%i/workers) ;\
+    for (( j=1 ; j<=$workers ; j++ )) ; do \
+        fleetctl start spark.worker@%i-$j ;\
+    done'
+ExecStop=/usr/bin/bash -c '\
+    workers=$(etcdctl get /etcd_spark/spark-master%i/workers) ;\
+    for (( j=1 ; j<=$workers ; j++ )) ; do \
+        fleetctl stop spark.worker@%i-$j ;\
+    done; \
+    fleetctl stop spark.master@%i.service'
