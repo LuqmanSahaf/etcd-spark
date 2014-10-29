@@ -42,7 +42,7 @@ cat defaults.conf | {
         mkdir $driver
         cp spark-env.sh $driver/
         echo export SPARK_EXECUTOR_MEMORY=${config[driver.executor_mem]} >> $driver/spark-env.sh
-        curl -L $default_url/driver$i/spark_env -XPUT --data-urlencode value@$driver/spark-env.sh
+        curl -L $default_url/$driver/spark_env -XPUT --data-urlencode value@$driver/spark-env.sh
     done
 
     for (( j=1 ; j<=$workers ; j++ ))
