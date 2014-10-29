@@ -25,7 +25,7 @@ ExecStart=/usr/bin/bash -c '\
     etcdctl get /etcd_spark/$master/log4j > $worker_dir/log4j.properties ;\
     echo "export SPARK_WORKER_PORT=$worker_port" >> $worker_dir/spark-env.sh ;\
     publish_args=$( echo ${COREOS_PRIVATE_IPV4} $to_publish | awk \'{\
-        split($0,arr," ");
+        split($0,arr," ");\
         for ( i=2; i <= NF; i++ ) {\
             if ( i == 2 ) { \
                 print "-p " arr[i] ":" arr[i];\

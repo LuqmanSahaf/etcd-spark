@@ -11,8 +11,8 @@ ExecStart=/usr/bin/bash -c '\
 sudo chmod +x /etc/environment ;\
 . /etc/environment ;\
     alias=$(echo %i | awk -F "-" {\'print$1\'}) ;\
-    master=spark-master$alias
-    driver=spark-driver%i
+    master=spark-master$alias ;\
+    driver=spark-driver%i ;\
     driver_dir=/home/core/run/$driver ;\
     rm -r $driver_dir ;\
     mkdir -p $driver_dir ;\
@@ -26,7 +26,7 @@ sudo chmod +x /etc/environment ;\
         etcdctl get /etcd_spark/$master/$driver/file_name > $driver_dir/file_name ;\
     done ;\
     publish_args=$( echo ${COREOS_PRIVATE_IPV4} $to_publish | awk \'{\
-        split($0,arr," ");
+        split($0,arr," "); \
         for ( i=2; i <= NF; i++ ) {\
             if ( i == 2 ) { \
                 print "-p " arr[i] ":" arr[i];\
